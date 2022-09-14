@@ -63,11 +63,35 @@
             android:layout_marginStart="4dp"
             />
 
+        <TextView
+            android:id="@+id/carOwners"
+            android:text="Owners - "
+            android:textSize="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/carYear"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="4dp"
+            />
+
+        <TextView
+            android:id="@+id/carKm"
+            android:text="Year - "
+            android:textSize="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/carOwners"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="4dp"
+            />
+
 
         <ImageView
             android:id="@+id/carItemImg"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
             android:layout_marginBottom="10dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

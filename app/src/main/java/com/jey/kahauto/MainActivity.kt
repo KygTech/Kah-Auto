@@ -1,5 +1,6 @@
 package com.jey.kahauto
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
@@ -17,7 +18,6 @@ import kotlin.concurrent.thread
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var repository: Repository
     private var carFragment = CarFragment()
     private lateinit var rvCarView: RecyclerView
 
@@ -29,7 +29,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        repository = Repository(application)
         createRecyclerView()
         btnAddCar()
         removeCarDisplayInfo()
@@ -41,47 +40,57 @@ class MainActivity : AppCompatActivity() {
         rvCarView.adapter = carAdapter
         rvCarView.layoutManager = LinearLayoutManager(this)
 
-        val carsListLiveData = repository.getAllCars()
+        val carsListLiveData = Repository.getInstance(this).getAllCars()
         carsListLiveData.observe(this) {
             carAdapter.carsListViewUpdate(it)
         }
     }
 
-    private fun btnAddCar() {
+    private fun btnAddCar(){
         val btnAdd = findViewById<Button>(R.id.btnAddCar)
-        val carCompany = findViewById<EditText>(R.id.et_car_company).text
-        val carModel = findViewById<EditText>(R.id.et_car_model).text
-        val carYear = findViewById<EditText>(R.id.et_car_year).text
-
         btnAdd.setOnClickListener {
-          if(carCompany.isEmpty()){
-              Toast.makeText(this,"Add car company", Toast.LENGTH_SHORT).show()
-          }else if(carModel.isEmpty()){
-              Toast.makeText(this,"Add car model", Toast.LENGTH_SHORT).show()
-          }else if (carYear.isEmpty()){
-              Toast.makeText(this,"Add car year", Toast.LENGTH_SHORT).show()
-          }else{
-              val car = Car(carCompany.toString(), carModel.toString(), carYear.toString())
-              thread(start = true) {
-                  repository.addCar(car)
-              }
-              carCompany.clear()
-              carModel.clear()
-              carYear.clear()
-          }
+        val intent = Intent(this, CarAddActivity::class.java)
+            startActivity(intent)
         }
     }
 
+//    private fun btnAddCar() {
+//        val btnAdd = findViewById<Button>(R.id.btnAddCar)
+//        val carCompany = findViewById<EditText>(R.id.et_car_company).text
+//        val carModel = findViewById<EditText>(R.id.et_car_model).text
+//        val carYear = findViewById<EditText>(R.id.et_car_year).text
+//
+////        btnAdd.setOnClickListener {
+////          if(carCompany.isEmpty()){
+////              Toast.makeText(this,"Add car company", Toast.LENGTH_SHORT).show()
+////          }else if(carModel.isEmpty()){
+////              Toast.makeText(this,"Add car model", Toast.LENGTH_SHORT).show()
+////          }else if (carYear.isEmpty()){
+////              Toast.makeText(this,"Add car year", Toast.LENGTH_SHORT).show()
+////          }else{
+////              val car = Car(carCompany.toString(), carModel.toString(), carYear.toString())
+////              thread(start = true) {
+////                  repository.addCar(car)
+////              }
+////              carCompany.clear()
+////              carModel.clear()
+////              carYear.clear()
+////          }
+////        }
+////    }
+
 
     private fun deleteCarItem(car: Car) {
-        repository.deleteCar(car)
+        Repository.getInstance(this).deleteCar(car)
     }
 
     private fun displayCarInfo(car: Car) {
         val bundle = bundleOf(
             "carCompany" to car.company,
             "carModel" to car.model,
-            "carYear" to car.year
+            "carYear" to car.year,
+            "carOwners" to car.owners,
+            "carKm" to car.carKm
         )
         carFragment.arguments = bundle
         supportFragmentManager.beginTransaction()

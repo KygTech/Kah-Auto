@@ -8,7 +8,9 @@ import androidx.room.PrimaryKey
 data class Car(
     @ColumnInfo(name = "company") val company:String,
     @ColumnInfo(name = "model") val model: String,
-    @ColumnInfo(name = "year") val year: String
+    @ColumnInfo(name = "year") val year: String,
+    @ColumnInfo(name = "owners") val owners:String,
+    @ColumnInfo(name = "km") val carKm: String
             )
 {
     @PrimaryKey(autoGenerate = true)
