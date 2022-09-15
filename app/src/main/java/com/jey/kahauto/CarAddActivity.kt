@@ -24,16 +24,11 @@ class CarAddActivity : AppCompatActivity() {
 
     private fun btnCancelForm() {
         val btnCancelForm = findViewById<Button>(R.id.btnFormCancel)
-
-
         btnCancelForm.setOnClickListener {
             clearEtForm()
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
-
         }
-
-
     }
 
     private fun btnAddCar() {
@@ -67,8 +62,7 @@ class CarAddActivity : AppCompatActivity() {
                 thread(start = true) {
                     Repository.getInstance(this).addCar(car)
                 }
-               clearEtForm()
-                formCarKm.clear()
+                clearEtForm()
                 val intent = Intent(this, MainActivity::class.java)
                 startActivity(intent)
             }

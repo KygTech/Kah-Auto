@@ -5,8 +5,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="270dp"
-        android:layout_height="390dp"
+        android:layout_width="300dp"
+        android:layout_height="450dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -77,7 +77,7 @@
 
         <TextView
             android:id="@+id/carKm"
-            android:text="Year - "
+            android:text="Km - "
             android:textSize="20dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -89,14 +89,14 @@
 
 
         <ImageView
-            android:id="@+id/carItemImg"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
-            android:layout_marginBottom="10dp"
-            app:layout_constraintStart_toStartOf="parent"
+            android:id="@+id/carFragmentImg"
+            android:layout_width="280dp"
+            android:layout_height="320dp"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            />
+            app:layout_constraintTop_toBottomOf="@+id/carKm"
+            android:layout_marginTop="2dp"/>
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

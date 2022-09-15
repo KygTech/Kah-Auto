@@ -1,6 +1,5 @@
 package com.jey.kahauto
 
-import android.app.Application
 import android.content.Context
 import androidx.lifecycle.LiveData
 
@@ -29,6 +28,10 @@ class Repository private constructor(applicationContext: Context) {
 
     fun deleteCar(car:Car){
         carDao.deleteCar(car)
+    }
+
+    fun updateCarImg(car:Car, uri: String, imageType: IMAGE_TYPE) {
+    carDao.updateCarImgUri(car, uri,imageType)
     }
 
 

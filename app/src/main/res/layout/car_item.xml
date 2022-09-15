@@ -21,8 +21,8 @@
 
     <ImageView
         android:id="@+id/addCarImg"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:background="@drawable/camera_icon"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -34,6 +34,7 @@
         android:id="@+id/btnDeleteCar"
         android:layout_width="25dp"
         android:layout_height="25dp"
+        android:layout_marginTop="12dp"
         android:background="@drawable/delete_icon"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

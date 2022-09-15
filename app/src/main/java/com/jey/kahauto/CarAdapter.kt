@@ -1,5 +1,7 @@
 package com.jey.kahauto
 
+import android.content.Context
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -7,22 +9,26 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import kotlin.concurrent.thread
 
 class CarAdapter(
     private val cars: MutableList<Car>,
-    val onCarClick : (Car) -> Unit,
-    val onTrashClick : (Car) -> Unit
+    val onCarClick: (Car) -> Unit,
+    val onTrashClick: (Car) -> Unit,
+    val onAddImgClick: (Car) -> Unit,
+    val context: Context
 ) : RecyclerView.Adapter<CarAdapter.CarsViewHolder>() {
 
     class CarsViewHolder(carView: View) : RecyclerView.ViewHolder(carView) {
         val tViewCar: TextView
         val btnDelete: Button
+        val addImg: ImageView
 
         init {
             tViewCar = carView.findViewById(R.id.carItem)
             btnDelete = carView.findViewById(R.id.btnDeleteCar)
-
+            addImg = carView.findViewById(R.id.addCarImg)
         }
     }
 
@@ -34,19 +40,33 @@ class CarAdapter(
     }
 
     override fun onBindViewHolder(holder: CarsViewHolder, position: Int) {
-     val currentCar = cars[position]
+        val currentCar = cars[position]
         holder.tViewCar.text = "${currentCar.company} - ${currentCar.model}"
+
+        if (currentCar.imageType != null) {
+            if (currentCar.imageType == IMAGE_TYPE.URI) {
+                holder.addImg.setImageURI(Uri.parse(currentCar.imagePath))
+            } else {
+                Glide.with(context).load(currentCar.imagePath).into(holder.addImg)
+            }
+        }
 
         holder.tViewCar.setOnClickListener {
             onCarClick(currentCar)
         }
 
         holder.btnDelete.setOnClickListener {
-            thread (start = true){
+            thread(start = true) {
                 onTrashClick(currentCar)
             }
             notifyItemRemoved(position)
         }
+
+        holder.addImg.setOnClickListener {
+            onAddImgClick(currentCar)
+        }
+
+
     }
 
     override fun getItemCount(): Int {
