@@ -3,7 +3,6 @@ package com.jey.kahauto
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.os.bundleOf
@@ -11,10 +10,6 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentContainerView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import kotlin.concurrent.thread
 
 class MainActivity : AppCompatActivity() {
 
@@ -26,6 +21,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         rvCarView = findViewById(R.id.rvCarItem)
+
     }
 
     override fun onStart() {
@@ -35,58 +31,14 @@ class MainActivity : AppCompatActivity() {
         removeCarDisplayInfo()
     }
 
-    val getContent = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        if (result.resultCode == RESULT_OK) {
-            val uri = result.data?.data
-            if (uri != null) {
-                contentResolver.takePersistableUriPermission(
-                    uri,
-                    Intent.FLAG_GRANT_READ_URI_PERMISSION
-                )
-              addImageToCar(uri.toString(),IMAGE_TYPE.URI)
-            }
-        }
+    val getContentFromGallery = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()) {
+            result -> ImagesManager.onImageResultFromGallery(result, chosenCar!!,this) }
 
-    }
 
-    private fun getImageFromGallery(car: Car) {
+    private fun onAddImgClick(): (car: Car) -> Unit = { car ->
         chosenCar = car
-        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
-        intent.addCategory(Intent.CATEGORY_OPENABLE)
-        intent.type = "image/*"
-        getContent.launch(intent)
-    }
-
-    private fun onAddImgClick(): (car: Car) -> Unit = { car->
-        chosenCar = car
-//    getImageFromGallery(car)
-        getImageFromApi(car)
-    }
-
-    private fun getImageFromApi(car: Car) {
-        chosenCar = car
-        val retrofit = ApiInterface.create()
-        retrofit.getImages(car.company).enqueue(object : Callback<ApiResponse> {
-            override fun onResponse(call: Call<ApiResponse>, response: Response<ApiResponse>) {
-               val apiResponse =  response.body()
-               val urlImage = apiResponse!!.imagesList[5]
-                addImageToCar(urlImage.imageUrl, IMAGE_TYPE.URL)
-            }
-
-            override fun onFailure(call: Call<ApiResponse>, t: Throwable) {
-                Log.e("Wrong api response", t.message.toString())
-            }
-        })
-
-    }
-
-
-    private fun addImageToCar(imagePath: String, imageType: IMAGE_TYPE) {
-        thread(start = true) {
-            Repository.getInstance(this).updateCarImg(chosenCar!!,imagePath, imageType)
-        }
+        ImagesManager.displayImageAlertDialog(this, car, getContentFromGallery)
     }
 
     private fun createRecyclerView() {
@@ -95,8 +47,8 @@ class MainActivity : AppCompatActivity() {
             displayCarInfo(),
             deleteCarItem(),
             onAddImgClick(),
-            this
-        )
+            this)
+
         rvCarView.adapter = carAdapter
         rvCarView.layoutManager = LinearLayoutManager(this)
 
@@ -105,7 +57,6 @@ class MainActivity : AppCompatActivity() {
             carAdapter.carsListViewUpdate(it)
         }
     }
-
 
     private fun btnAddCar() {
         val btnAdd = findViewById<Button>(R.id.btnAddCar)

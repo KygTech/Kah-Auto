@@ -31,6 +31,7 @@ class CarAddActivity : AppCompatActivity() {
         }
     }
 
+
     private fun btnAddCar() {
 
         val btnFormDone = findViewById<Button>(R.id.btnFormDone)
@@ -39,6 +40,8 @@ class CarAddActivity : AppCompatActivity() {
         val formCarYear = findViewById<EditText>(R.id.carFormYear).text
         val formCarOwners = findViewById<EditText>(R.id.carFormOwners).text
         val formCarKm = findViewById<EditText>(R.id.carFormKm).text
+
+
 
         btnFormDone.setOnClickListener {
             if (formCarCompany.isEmpty()) {
