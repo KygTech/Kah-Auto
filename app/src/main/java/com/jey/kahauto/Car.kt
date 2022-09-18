@@ -5,7 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 enum class IMAGE_TYPE {
-    URI, URL
+    URI, URL,
 }
 
 @Entity(tableName = "carsTable")

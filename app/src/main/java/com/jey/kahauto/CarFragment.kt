@@ -30,7 +30,7 @@ class CarFragment : Fragment(R.layout.car_fragment) {
         val carKm = requireArguments().getString("carKm")
 
         val carImgPath = requireArguments().getString("carImgPath")
-        var carImgType = requireArguments().getString("carImgType")
+
 
 
         carCompanyView.text = "Company  -  $carCompany"

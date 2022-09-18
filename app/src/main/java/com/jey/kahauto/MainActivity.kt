@@ -11,11 +11,14 @@ import androidx.fragment.app.FragmentContainerView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
+
+
 class MainActivity : AppCompatActivity() {
 
     private var carFragment = CarFragment()
     private lateinit var rvCarView: RecyclerView
     private var chosenCar: Car? = null
+    private  var cameraRequestId = 1222
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,13 +35,19 @@ class MainActivity : AppCompatActivity() {
     }
 
     val getContentFromGallery = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()) {
-            result -> ImagesManager.onImageResultFromGallery(result, chosenCar!!,this) }
+        ActivityResultContracts.StartActivityForResult()
+    ) { result -> ImagesManager.onImageResultFromGallery(result, chosenCar!!, this) }
+
+//    val getContentFromCamera = registerForActivityResult(
+//        ActivityResultContracts.StartActivityForResult()
+//    ) { result -> ImagesManager.onImageResultFromCamera(result, chosenCar!!, this) }
 
 
     private fun onAddImgClick(): (car: Car) -> Unit = { car ->
         chosenCar = car
-        ImagesManager.displayImageAlertDialog(this, car, getContentFromGallery)
+        ImagesManager.displayCustomImgDialog(this, car, getContentFromGallery)
+
+
     }
 
     private fun createRecyclerView() {
@@ -47,7 +56,8 @@ class MainActivity : AppCompatActivity() {
             displayCarInfo(),
             deleteCarItem(),
             onAddImgClick(),
-            this)
+            this
+        )
 
         rvCarView.adapter = carAdapter
         rvCarView.layoutManager = LinearLayoutManager(this)
@@ -95,5 +105,10 @@ class MainActivity : AppCompatActivity() {
             rvCarView.isVisible = true
         }
     }
+
+
+
+
+
 
 }

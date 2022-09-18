@@ -31,49 +31,54 @@ class CarAddActivity : AppCompatActivity() {
         }
     }
 
-
-    private fun btnAddCar() {
-
-        val btnFormDone = findViewById<Button>(R.id.btnFormDone)
+    private fun addNewCar() :Boolean{
         val formCarCompany = findViewById<EditText>(R.id.carFormCompany).text
         val formCarModel = findViewById<EditText>(R.id.carFormModel).text
         val formCarYear = findViewById<EditText>(R.id.carFormYear).text
         val formCarOwners = findViewById<EditText>(R.id.carFormOwners).text
         val formCarKm = findViewById<EditText>(R.id.carFormKm).text
 
-
-
-        btnFormDone.setOnClickListener {
-            if (formCarCompany.isEmpty()) {
-                Toast.makeText(this, "Add car company", Toast.LENGTH_SHORT).show()
-            } else if (formCarModel.isEmpty()) {
-                Toast.makeText(this, "Add car model", Toast.LENGTH_SHORT).show()
-            } else if (formCarYear.isEmpty()) {
-                Toast.makeText(this, "Add car year", Toast.LENGTH_SHORT).show()
-            } else if (formCarOwners.isEmpty()) {
-                Toast.makeText(this, "Add car owners", Toast.LENGTH_SHORT).show()
-            } else if (formCarKm.isEmpty()) {
-                Toast.makeText(this, "Add car km", Toast.LENGTH_SHORT).show()
-            } else {
-                val car = Car(
-                    formCarCompany.toString(),
-                    formCarModel.toString(),
-                    formCarYear.toString(),
-                    formCarOwners.toString(),
-                    formCarKm.toString()
-                )
-                thread(start = true) {
-                    Repository.getInstance(this).addCar(car)
-                }
-                clearEtForm()
-                val intent = Intent(this, MainActivity::class.java)
-                startActivity(intent)
+        if (formCarCompany.isEmpty()) {
+            Toast.makeText(this, "Add car company", Toast.LENGTH_SHORT).show()
+        } else if (formCarModel.isEmpty()) {
+            Toast.makeText(this, "Add car model", Toast.LENGTH_SHORT).show()
+        } else if (formCarYear.isEmpty()) {
+            Toast.makeText(this, "Add car year", Toast.LENGTH_SHORT).show()
+        } else if (formCarOwners.isEmpty()) {
+            Toast.makeText(this, "Add car owners", Toast.LENGTH_SHORT).show()
+        } else if (formCarKm.isEmpty()) {
+            Toast.makeText(this, "Add car km", Toast.LENGTH_SHORT).show()
+        } else {
+            val car = Car(
+                formCarCompany.toString(),
+                formCarModel.toString(),
+                formCarYear.toString(),
+                formCarOwners.toString(),
+                formCarKm.toString()
+            )
+            thread(start = true) {
+                Repository.getInstance(this).addCar(car)
             }
+            NotificationManager.display(this,car)
+            return true
+        }
+        return false
+    }
+
+    private fun btnAddCar() {
+        val btnFormDone = findViewById<Button>(R.id.btnFormDone)
+        btnFormDone.setOnClickListener {
+           if(addNewCar()){
+               clearEtForm()
+               val intent = Intent(this, MainActivity::class.java)
+               startActivity(intent)
+           }else{
+               addNewCar()
+           }
         }
     }
 
     private fun clearEtForm() {
-
         val formCarCompany = findViewById<EditText>(R.id.carFormCompany).text
         val formCarModel = findViewById<EditText>(R.id.carFormModel).text
         val formCarYear = findViewById<EditText>(R.id.carFormYear).text

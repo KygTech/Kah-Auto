@@ -1,13 +1,24 @@
 package com.jey.kahauto
 
+
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.net.Uri
+import android.provider.MediaStore
 import android.util.Log
+import android.view.LayoutInflater
+import android.widget.Button
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat.startActivityForResult
+import androidx.core.view.isVisible
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -36,6 +47,20 @@ object ImagesManager {
         }
     }
 
+
+//    fun getImageFromCamera(car: Car, getContent: ActivityResultLauncher<Intent>) {
+//        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+//        getContent.launch(intent)
+//    }
+
+
+//    fun onImageResultFromCamera(result: ActivityResult, chosenCar: Car, context: Context) {
+//        if (result.resultCode == AppCompatActivity.RESULT_OK) {
+//            val takenImage = result.data?.data
+//
+//        }
+//    }
+
     fun addImageToCar(car: Car, imagePath: String, imageType: IMAGE_TYPE, context: Context) {
         thread(start = true) {
             Repository.getInstance(context).updateCarImg(car, imagePath, imageType)
@@ -57,27 +82,64 @@ object ImagesManager {
         })
     }
 
-    fun displayImageAlertDialog(
+    fun displayCustomImgDialog(
         context: Context,
         car: Car,
-        getContent: ActivityResultLauncher<Intent>
-    ) {
-        val alertBuilder = AlertDialog.Builder(context)
-        alertBuilder.setTitle("Choose an image")
-        alertBuilder.setMessage("Choose image for ${car.company} ${car.model}")
+        getContentFromGallery: ActivityResultLauncher<Intent>,
+//        getContentFromCamera: ActivityResultLauncher<Intent>,
 
-        alertBuilder.setNeutralButton(
-            "Cancel"
-        ) { dialogInterface: DialogInterface, i: Int -> }
+        ) {
 
-        alertBuilder.setPositiveButton(
-            "Gallery"
-        ) { dialogInterface: DialogInterface, i: Int ->
-         getImageFromGallery(car, getContent)
+        val mDialogView = LayoutInflater
+            .from(context)
+            .inflate(R.layout.dialog_choose_img, null)
+
+        val dialog = AlertDialog.Builder(context)
+            .setView(mDialogView)
+            .create()
+
+        dialog.show()
+
+        val btnGallery = mDialogView.findViewById<Button>(R.id.dialog_img_from_gallery)
+        btnGallery.setOnClickListener {
+            getImageFromGallery(car, getContentFromGallery)
+            dialog.cancel()
+
         }
-        alertBuilder.setNegativeButton("Network") { dialogInterface: DialogInterface, i: Int ->
-          getImageFromApi(car, context)
+
+        val btnNetwork = mDialogView.findViewById<Button>(R.id.dialog_img_from_network)
+        val btnCarAddImg = mDialogView.findViewById<ImageView>(R.id.addCarImg)
+        btnNetwork.setOnClickListener {
+            getImageFromApi(car, context)
+            dialog.cancel()
         }
-        alertBuilder.show()
+
+        val btnCamera = mDialogView.findViewById<Button>(R.id.dialog_img_from_camera)
+        btnCamera.setOnClickListener {
+//            getImageFromCamera(car, getContentFromCamera)
+            dialog.cancel()
+        }
+
+
+        val btnRemove = mDialogView.findViewById<Button>(R.id.dialog_remove_img)
+        val removeTitle = mDialogView.findViewById<TextView>(R.id.dialog_remove_title)
+
+        if (car.imagePath == R.drawable.camera_icon_two.toString()) {
+            btnRemove.isVisible = false
+            removeTitle.isVisible = false
+        }
+
+        btnRemove.setOnClickListener {
+            thread(start = true) {
+                Repository.getInstance(context)
+                    .updateCarImg(car, R.drawable.camera_icon_two.toString(), IMAGE_TYPE.URI)
+            }
+            dialog.cancel()
+        }
+
+        val btnCancel = mDialogView.findViewById<Button>(R.id.dialog_cancel)
+        btnCancel.setOnClickListener { dialog.cancel() }
+
     }
+
 }
