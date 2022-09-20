@@ -16,6 +16,7 @@ interface CarsDao {
     @Query("Select * from carsTable")
     fun getAllCars():LiveData<List<Car>>
 
+
     @Update
     fun updateCar(car: Car)
 

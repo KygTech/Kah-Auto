@@ -3,6 +3,7 @@ package com.jey.kahauto
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import java.sql.Timestamp
 
 enum class IMAGE_TYPE {
     URI, URL,
@@ -16,7 +17,8 @@ data class Car(
     @ColumnInfo(name = "owners") val owners:String,
     @ColumnInfo(name = "km") val carKm: String,
     @ColumnInfo(name = "image_path") var imagePath : String? = null,
-    @ColumnInfo(name = "image_type") var imageType: IMAGE_TYPE?= null
+    @ColumnInfo(name = "image_type") var imageType: IMAGE_TYPE?= null,
+    @ColumnInfo(name = "timestamp") var timestamp: Long = System.currentTimeMillis()
             )
 {
     @PrimaryKey(autoGenerate = true)

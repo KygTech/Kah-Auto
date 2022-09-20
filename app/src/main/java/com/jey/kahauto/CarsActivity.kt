@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentContainerView
@@ -13,18 +14,18 @@ import androidx.recyclerview.widget.RecyclerView
 
 
 
-class MainActivity : AppCompatActivity() {
+class CarsActivity : AppCompatActivity() {
 
     private var carFragment = CarFragment()
     private lateinit var rvCarView: RecyclerView
     private var chosenCar: Car? = null
-    private  var cameraRequestId = 1222
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         rvCarView = findViewById(R.id.rvCarItem)
-
+        val serviceIntent = Intent(this,CarsService::class.java)
+        ContextCompat.startForegroundService(this,serviceIntent)
     }
 
     override fun onStart() {
@@ -58,10 +59,8 @@ class MainActivity : AppCompatActivity() {
             onAddImgClick(),
             this
         )
-
         rvCarView.adapter = carAdapter
         rvCarView.layoutManager = LinearLayoutManager(this)
-
         val carsListLiveData = Repository.getInstance(this).getAllCars()
         carsListLiveData.observe(this) {
             carAdapter.carsListViewUpdate(it)
@@ -105,9 +104,6 @@ class MainActivity : AppCompatActivity() {
             rvCarView.isVisible = true
         }
     }
-
-
-
 
 
 

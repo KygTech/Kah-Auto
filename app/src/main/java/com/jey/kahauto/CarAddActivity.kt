@@ -26,7 +26,7 @@ class CarAddActivity : AppCompatActivity() {
         val btnCancelForm = findViewById<Button>(R.id.btnFormCancel)
         btnCancelForm.setOnClickListener {
             clearEtForm()
-            val intent = Intent(this, MainActivity::class.java)
+            val intent = Intent(this, CarsActivity::class.java)
             startActivity(intent)
         }
     }
@@ -70,7 +70,7 @@ class CarAddActivity : AppCompatActivity() {
         btnFormDone.setOnClickListener {
            if(addNewCar()){
                clearEtForm()
-               val intent = Intent(this, MainActivity::class.java)
+               val intent = Intent(this, CarsActivity::class.java)
                startActivity(intent)
            }else{
                addNewCar()
