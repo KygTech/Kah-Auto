@@ -1,4 +1,4 @@
-package com.jey.kahauto
+package com.jey.kahauto.model
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

@@ -1,4 +1,4 @@
-package com.jey.kahauto
+package com.jey.kahauto.model
 
 import android.content.Context
 import androidx.room.Database
@@ -11,7 +11,7 @@ abstract class CarsDatabase : RoomDatabase() {
     abstract fun getCarsDao(): CarsDao
 
     companion object {
-        fun getDatabase(context: Context) : CarsDatabase{
+        fun getDatabase(context: Context) : CarsDatabase {
             return Room.databaseBuilder(
                 context.applicationContext,
                 CarsDatabase::class.java,

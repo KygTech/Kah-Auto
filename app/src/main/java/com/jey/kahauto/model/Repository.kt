@@ -1,4 +1,4 @@
-package com.jey.kahauto
+package com.jey.kahauto.model
 
 import android.content.Context
 import androidx.lifecycle.LiveData
@@ -12,7 +12,7 @@ class Repository private constructor(applicationContext: Context) {
         private lateinit var instance: Repository
 
         fun getInstance(context: Context): Repository {
-            if (!::instance.isInitialized) {
+            if (!Companion::instance.isInitialized) {
                 instance = Repository(context)
             }
             return instance
@@ -20,7 +20,7 @@ class Repository private constructor(applicationContext: Context) {
     }
 
 
-    fun getAllCars(): LiveData<List<Car>> {
+    fun getAllCarsAsLiveData(): LiveData<List<Car>> {
         return carDao.getAllCars()
     }
 

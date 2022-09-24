@@ -1,23 +1,24 @@
-package com.jey.kahauto
+package com.jey.kahauto.ui
 
-import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.view.isVisible
-import kotlin.concurrent.thread
+import com.jey.kahauto.R
+import com.jey.kahauto.model.Repository
+import kotlinx.android.synthetic.main.activity_registration.*
+import kotlinx.android.synthetic.main.fragment_login.*
 
 class RegistrationActivity : AppCompatActivity() {
 
     private var isLoginFragment = true
-    lateinit var sharedPreferences: SharedPreferences
+    private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,7 +43,7 @@ class RegistrationActivity : AppCompatActivity() {
     }
 
     private fun setTextViewClickListener() {
-        findViewById<TextView>(R.id.login_signup_tv).setOnClickListener {
+        login_signup_tv.setOnClickListener {
             if (isLoginFragment) {
                 displaySignUpFragment()
             } else {
@@ -52,9 +53,9 @@ class RegistrationActivity : AppCompatActivity() {
     }
 
     private fun displaySignUpFragment() {
-        findViewById<Button>(R.id.login_button).isVisible = false
+        login_button.isVisible = false
         isLoginFragment = false
-        findViewById<TextView>(R.id.login_signup_tv).text = "Already a member?? click here to login"
+        login_signup_tv.text = "Already a member?? click here to login"
         val signUpFragment = SignUpFragment()
         supportFragmentManager.beginTransaction()
             .replace(R.id.registration_fragment_view, signUpFragment).commit()
@@ -62,9 +63,9 @@ class RegistrationActivity : AppCompatActivity() {
     }
 
     private fun displayLoginFragment() {
-        findViewById<Button>(R.id.login_button).isVisible = true
+        login_button.isVisible = true
         isLoginFragment = true
-        findViewById<TextView>(R.id.login_signup_tv).text = "Not a member yet? click here to SignUp"
+        login_signup_tv.text = "Not a member yet? click here to SignUp"
         val loginFragment = LoginFragment()
         supportFragmentManager.beginTransaction()
             .replace(R.id.registration_fragment_view, loginFragment).commit()
@@ -84,15 +85,16 @@ class RegistrationActivity : AppCompatActivity() {
 
 
     private fun isUserLegit(): Boolean {
-        val username = findViewById<EditText>(R.id.username_login_et).text.toString()
-        val password = findViewById<EditText>(R.id.password_login_et).text.toString()
+        val username = username_login_et.text.toString()
+        val password = password_login_et.text.toString()
 
+        return true
 
-        val usersList = Repository.getInstance(this).getAllUsers()
-        for (user in usersList) {
-            if (username == user.username && password == user.password)
-                return true
-        }
-        return false
+//        val usersList = Repository.getInstance(this).getAllUsers()
+//        for (user in usersList) {
+//            if (username == user.username && password == user.password)
+//                return true
+//        }
+//        return false
     }
 }

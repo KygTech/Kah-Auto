@@ -6,12 +6,12 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.util.Log
-import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.lifecycle.LiveData
+import com.jey.kahauto.model.Car
+import com.jey.kahauto.model.Repository
+import com.jey.kahauto.ui.RegistrationActivity
 
 object NotificationManager {
 
@@ -67,7 +67,7 @@ object NotificationManager {
         val appIntent = Intent(context, RegistrationActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(context, 0, appIntent, 0)
 
-        val carList = Repository.getInstance(context).getAllCars().value
+        val carList = Repository.getInstance(context).getAllCarsAsLiveData().value
 
         if (carList != null) {
             for (car in carList)

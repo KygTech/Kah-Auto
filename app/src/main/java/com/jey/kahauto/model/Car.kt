@@ -1,9 +1,8 @@
-package com.jey.kahauto
+package com.jey.kahauto.model
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import java.sql.Timestamp
 
 enum class IMAGE_TYPE {
     URI, URL,

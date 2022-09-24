@@ -1,4 +1,4 @@
-package com.jey.kahauto
+package com.jey.kahauto.model
 
 import com.google.gson.annotations.SerializedName
 

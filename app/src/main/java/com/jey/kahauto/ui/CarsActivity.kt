@@ -1,31 +1,36 @@
-package com.jey.kahauto
+package com.jey.kahauto.ui
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentContainerView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-
+import com.jey.kahauto.*
+import com.jey.kahauto.model.Car
+import com.jey.kahauto.model.Repository
+import com.jey.kahauto.viewmodel.CarsViewModel
+import kotlinx.android.synthetic.main.activity_main.*
 
 
 class CarsActivity : AppCompatActivity() {
 
+    private val carsViewModel: CarsViewModel by viewModels()
+
     private var carFragment = CarFragment()
-    private lateinit var rvCarView: RecyclerView
     private var chosenCar: Car? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        rvCarView = findViewById(R.id.rvCarItem)
-        val serviceIntent = Intent(this,CarsService::class.java)
-        ContextCompat.startForegroundService(this,serviceIntent)
+        val serviceIntent = Intent(this, CarsService::class.java)
+        ContextCompat.startForegroundService(this, serviceIntent)
     }
 
     override fun onStart() {
@@ -34,6 +39,8 @@ class CarsActivity : AppCompatActivity() {
         btnAddCar()
         removeCarDisplayInfo()
     }
+
+
 
     val getContentFromGallery = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -59,17 +66,18 @@ class CarsActivity : AppCompatActivity() {
             onAddImgClick(),
             this
         )
-        rvCarView.adapter = carAdapter
-        rvCarView.layoutManager = LinearLayoutManager(this)
-        val carsListLiveData = Repository.getInstance(this).getAllCars()
-        carsListLiveData.observe(this) {
+        car_rv.adapter = carAdapter
+        car_rv.layoutManager = LinearLayoutManager(this)
+
+        carsViewModel.carsListLiveData.observe(this) {
             carAdapter.carsListViewUpdate(it)
         }
+
+
     }
 
     private fun btnAddCar() {
-        val btnAdd = findViewById<Button>(R.id.btnAddCar)
-        btnAdd.setOnClickListener {
+        btnAddCar.setOnClickListener {
             val intent = Intent(this, CarAddActivity::class.java)
             startActivity(intent)
         }
@@ -94,17 +102,15 @@ class CarsActivity : AppCompatActivity() {
         supportFragmentManager.beginTransaction()
             .replace(R.id.car_fragment_view, carFragment)
             .commit()
-        rvCarView.isVisible = false
+        car_rv.isVisible = false
     }
 
     private fun removeCarDisplayInfo() {
-        val carFragmentContainer = findViewById<FragmentContainerView>(R.id.car_fragment_view)
-        carFragmentContainer.setOnClickListener {
+        car_fragment_view.setOnClickListener {
             supportFragmentManager.beginTransaction().remove(carFragment).commit()
-            rvCarView.isVisible = true
+            car_rv.isVisible = true
         }
     }
-
 
 
 }

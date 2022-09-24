@@ -10,6 +10,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.jey.kahauto.model.Car
+import com.jey.kahauto.model.IMAGE_TYPE
+import kotlinx.android.synthetic.main.car_item.view.*
 import kotlin.concurrent.thread
 
 class CarAdapter(
@@ -26,9 +29,9 @@ class CarAdapter(
         val addImg: ImageView
 
         init {
-            tViewCar = carView.findViewById(R.id.carItem)
-            btnDelete = carView.findViewById(R.id.btnDeleteCar)
-            addImg = carView.findViewById(R.id.addCarImg)
+            tViewCar = carView.carItem
+            btnDelete = carView.btnDeleteCar
+            addImg = carView.addCarImg
         }
     }
 

@@ -1,20 +1,28 @@
-package com.jey.kahauto
+package com.jey.kahauto.ui
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
-import android.widget.TextView
 import android.widget.Toast
 import androidx.core.view.isVisible
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import com.jey.kahauto.R
+import com.jey.kahauto.viewmodel.RegistrationViewModel
+import com.jey.kahauto.model.Repository
+import com.jey.kahauto.model.User
+import kotlinx.android.synthetic.main.activity_registration.*
+import kotlinx.android.synthetic.main.fragment_login.*
+import kotlinx.android.synthetic.main.fragment_sing_up.*
 import kotlin.concurrent.thread
 
 class SignUpFragment : Fragment() {
 
+    private val registrationViewModel: RegistrationViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -26,9 +34,12 @@ class SignUpFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        val activity = requireActivity()
-        val signUpBtn = activity.findViewById<Button>(R.id.sign_up_btn)
-        signUpBtn.setOnClickListener {
+
+        username_login_et.setText(registrationViewModel.currentUsername)
+        username_login_et.addTextChangedListener {
+            registrationViewModel.currentUsername = it.toString()
+        }
+        sign_up_btn.setOnClickListener {
             addUser()
         }
     }
@@ -36,10 +47,10 @@ class SignUpFragment : Fragment() {
 
     private fun addUser() {
         val activity = requireActivity()
-        val username = activity.findViewById<EditText>(R.id.username_sign_up_et).text
-        val password = activity.findViewById<EditText>(R.id.password_sign_up_et).text
-        val phoneNumber = activity.findViewById<EditText>(R.id.phone_sign_up_et).text
-        val email = activity.findViewById<EditText>(R.id.email_sign_up_et).text
+        val username = username_sign_up_et.text
+        val password = password_sign_up_et.text
+        val phoneNumber = phone_sign_up_et.text
+        val email =email_sign_up_et.text
 
 
         if (username.isEmpty()) {
@@ -64,14 +75,16 @@ class SignUpFragment : Fragment() {
             password.clear()
             phoneNumber.clear()
             email.clear()
+
             val loginFragment = LoginFragment()
 
             requireActivity().supportFragmentManager.beginTransaction()
                 .replace(R.id.registration_fragment_view, loginFragment).commit()
-                requireActivity().findViewById<Button>(R.id.login_button).isVisible=true
+            login_button.isVisible = true
             Toast.makeText(context, "Now you can login! enjoy", Toast.LENGTH_LONG).show()
         }
     }
 }
+
 
 

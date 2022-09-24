@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".CarsActivity"
+    tools:context=".ui.CarsActivity"
     android:id="@+id/activity_main">
 
 
@@ -21,7 +21,7 @@
         app:layout_constraintVertical_bias="0.086" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvCarItem"
+        android:id="@+id/car_rv"
         android:layout_width="340dp"
         android:layout_height="500dp"
         app:layout_constraintStart_toStartOf="parent"

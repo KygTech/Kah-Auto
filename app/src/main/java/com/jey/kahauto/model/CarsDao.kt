@@ -1,6 +1,5 @@
-package com.jey.kahauto
+package com.jey.kahauto.model
 
-import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.room.*
 
@@ -8,10 +7,10 @@ import androidx.room.*
 interface CarsDao {
 
     @Insert
-    fun insertCar(car:Car)
+    fun insertCar(car: Car)
 
     @Delete
-    fun deleteCar(car:Car)
+    fun deleteCar(car: Car)
 
     @Query("Select * from carsTable")
     fun getAllCars():LiveData<List<Car>>

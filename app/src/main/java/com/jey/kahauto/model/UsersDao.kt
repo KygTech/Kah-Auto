@@ -1,6 +1,5 @@
-package com.jey.kahauto
+package com.jey.kahauto.model
 
-import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
