@@ -30,4 +30,6 @@ private val registrationViewModel: RegistrationViewModel by activityViewModels()
         }
     }
 
+
+
 }

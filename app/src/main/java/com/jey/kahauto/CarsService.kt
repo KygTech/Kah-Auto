@@ -11,7 +11,7 @@ import kotlin.concurrent.thread
 class CarsService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        val notification = NotificationManager.displayOver24h(this)
+        val notification = NotificationManager.getServiceNotification(this)
         startForeground(1, notification)
         return super.onStartCommand(intent, flags, startId)
     }

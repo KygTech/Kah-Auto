@@ -1,34 +1,41 @@
 package com.jey.kahauto.ui
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
+import android.content.SharedPreferences
 import android.os.Bundle
-import android.widget.Button
+import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
-import androidx.fragment.app.FragmentContainerView
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.firebase.auth.FirebaseAuth
 import com.jey.kahauto.*
 import com.jey.kahauto.model.Car
 import com.jey.kahauto.model.Repository
 import com.jey.kahauto.viewmodel.CarsViewModel
-import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_cars.*
 
 
 class CarsActivity : AppCompatActivity() {
-
+    private lateinit var sharedPreferences: SharedPreferences
     private val carsViewModel: CarsViewModel by viewModels()
+    private val firebaseAuth = FirebaseAuth.getInstance()
+
 
     private var carFragment = CarFragment()
     private var chosenCar: Car? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_cars)
         val serviceIntent = Intent(this, CarsService::class.java)
         ContextCompat.startForegroundService(this, serviceIntent)
     }
@@ -38,11 +45,45 @@ class CarsActivity : AppCompatActivity() {
         createRecyclerView()
         btnAddCar()
         removeCarDisplayInfo()
+        sharedPreferences = getSharedPreferences(R.string.app_name.toString(), MODE_PRIVATE)
+
+        val username = sharedPreferences.getString("USER_NAME", "")
+        hey_user.text = "Hello, $username"
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.menu_logout -> {
+                signOutFromApp()
+            }
+            R.id.menu_about -> {}
+        }
+        return super.onOptionsItemSelected(item)
     }
 
 
+    private fun signOutFromApp() {
 
-    val getContentFromGallery = registerForActivityResult(
+        GoogleSignIn.getClient(
+            this,
+            GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).build()
+        ).signOut()
+
+        sharedPreferences.edit().remove("LAST_LOGIN").apply()
+
+        firebaseAuth.signOut()
+        val intent = Intent(this, RegistrationActivity::class.java)
+        startActivity(intent)
+        finish()
+    }
+
+
+    private val getContentFromGallery = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result -> ImagesManager.onImageResultFromGallery(result, chosenCar!!, this) }
 

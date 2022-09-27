@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.jey.kahauto.model.Car
 import com.jey.kahauto.model.IMAGE_TYPE
-import kotlinx.android.synthetic.main.car_item.view.*
+import kotlinx.android.synthetic.main.car_item_row.view.*
 import kotlin.concurrent.thread
 
 class CarAdapter(
@@ -38,7 +38,7 @@ class CarAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CarsViewHolder {
         return CarsViewHolder(
             LayoutInflater.from(parent.context)
-                .inflate(R.layout.car_item, parent, false)
+                .inflate(R.layout.car_item_row, parent, false)
         )
     }
 

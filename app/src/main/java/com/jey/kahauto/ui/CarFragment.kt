@@ -1,14 +1,13 @@
 package com.jey.kahauto.ui
 
 
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.jey.kahauto.R
-import kotlinx.android.synthetic.main.car_fragment.*
+import kotlinx.android.synthetic.main.fragment_car_item_display.*
 
-class CarFragment : Fragment(R.layout.car_fragment) {
+
+class CarFragment : Fragment(R.layout.fragment_car_item_display) {
 
 
     override fun onResume() {

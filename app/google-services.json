@@ -1,0 +1,47 @@
+ {
+  "project_info": {
+    "project_number": "1054166485018",
+    "project_id": "kah-auto",
+    "storage_bucket": "kah-auto.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1054166485018:android:2fd3d69f49e4bb3b2d29a3",
+        "android_client_info": {
+          "package_name": "com.jey.kahauto"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1054166485018-2mtrj1gi1ghgq5ke7rlbrrs3bqdm1uta.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.jey.kahauto",
+            "certificate_hash": "35e46df1856b7130ec52aff88072c0be079b62b1"
+          }
+        },
+        {
+          "client_id": "1054166485018-0fe24dr7qu43rglnbphcplabfthpl0u9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyChVwgbXH6xtuy8zb0C8hHThiSLPNOBGJ4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1054166485018-0fe24dr7qu43rglnbphcplabfthpl0u9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

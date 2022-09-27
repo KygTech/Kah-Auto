@@ -5,15 +5,11 @@ import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
-import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
 import android.widget.Toast
 import androidx.core.view.isVisible
 import com.jey.kahauto.R
-import com.jey.kahauto.model.Repository
 import kotlinx.android.synthetic.main.activity_registration.*
-import kotlinx.android.synthetic.main.fragment_login.*
+
 
 class RegistrationActivity : AppCompatActivity() {
 
@@ -25,7 +21,6 @@ class RegistrationActivity : AppCompatActivity() {
         setContentView(R.layout.activity_registration)
         displayLoginFragment()
         setTextViewClickListener()
-
     }
 
     override fun onStart() {
@@ -73,28 +68,26 @@ class RegistrationActivity : AppCompatActivity() {
 
     fun onStartClick(view: View) {
         if (isUserLegit()) {
-            val editor = sharedPreferences.edit()
-            editor.putLong("LAST_LOGIN", System.currentTimeMillis()).apply()
-
-            val intent = Intent(this, CarsActivity::class.java)
-            startActivity(intent)
+       goInApp("Someone")
         } else {
             Toast.makeText(this, "Email or Password are wrong.", Toast.LENGTH_SHORT).show()
         }
     }
 
+    fun goInApp(userName: String) {
+        val editor = sharedPreferences.edit()
+        editor.putLong("LAST_LOGIN", System.currentTimeMillis()).apply()
+        editor.putString("USER_NAME", userName).apply()
+
+        val intent = Intent(this, CarsActivity::class.java)
+        startActivity(intent)
+    }
 
     private fun isUserLegit(): Boolean {
-        val username = username_login_et.text.toString()
-        val password = password_login_et.text.toString()
+//        val username = username_login_et.text.toString()
+//        val password = password_login_et.text.toString()
 
         return true
 
-//        val usersList = Repository.getInstance(this).getAllUsers()
-//        for (user in usersList) {
-//            if (username == user.username && password == user.password)
-//                return true
-//        }
-//        return false
     }
 }
