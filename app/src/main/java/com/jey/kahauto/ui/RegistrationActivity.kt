@@ -4,17 +4,22 @@ import android.content.Intent
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.core.view.isVisible
+import com.google.firebase.auth.FirebaseAuth
 import com.jey.kahauto.R
 import kotlinx.android.synthetic.main.activity_registration.*
+import kotlinx.android.synthetic.main.fragment_login.*
+import kotlinx.android.synthetic.main.fragment_sing_up.*
 
 
 class RegistrationActivity : AppCompatActivity() {
 
     private var isLoginFragment = true
     private lateinit var sharedPreferences: SharedPreferences
+    private val firebaseAuth = FirebaseAuth.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,6 +54,7 @@ class RegistrationActivity : AppCompatActivity() {
 
     private fun displaySignUpFragment() {
         login_button.isVisible = false
+        btnSignUp.isVisible = true
         isLoginFragment = false
         login_signup_tv.text = "Already a member?? click here to login"
         val signUpFragment = SignUpFragment()
@@ -59,6 +65,7 @@ class RegistrationActivity : AppCompatActivity() {
 
     private fun displayLoginFragment() {
         login_button.isVisible = true
+        btnSignUp.isVisible = false
         isLoginFragment = true
         login_signup_tv.text = "Not a member yet? click here to SignUp"
         val loginFragment = LoginFragment()
@@ -66,12 +73,47 @@ class RegistrationActivity : AppCompatActivity() {
             .replace(R.id.registration_fragment_view, loginFragment).commit()
     }
 
-    fun onStartClick(view: View) {
-        if (isUserLegit()) {
-       goInApp("Someone")
+    fun onSignUpBtnClick(view: View) {
+
+        val email = email_sign_up_et.text.toString()
+        val password = password_sign_up_et.text.toString()
+
+        if (email.isEmpty()) {
+            Toast.makeText(this, "Please write your email", Toast.LENGTH_SHORT).show()
+        } else if (password.isEmpty() || password.length < 6) {
+            Toast.makeText(this, "Password must contain min 6 digits", Toast.LENGTH_SHORT).show()
         } else {
-            Toast.makeText(this, "Email or Password are wrong.", Toast.LENGTH_SHORT).show()
+            if (email.contains("@") && password.length >= 6) {
+                firebaseAuth.createUserWithEmailAndPassword(email, password)
+                    .addOnSuccessListener {
+                        Toast.makeText(this, "Success, you can login now", Toast.LENGTH_SHORT).show()
+                        displayLoginFragment()
+                    }
+                    .addOnFailureListener {
+                        Toast.makeText(
+                            this,
+                            "failed",                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+            }else{
+                Toast.makeText(this, "Email or password are not as required", Toast.LENGTH_SHORT).show()
+            }
+
         }
+    }
+
+
+    fun onLoginBtnClick(view: View) {
+        val email = username_login_et.text.toString()
+        val password = password_login_et.text.toString()
+        firebaseAuth.signInWithEmailAndPassword(email, password)
+            .addOnSuccessListener {
+                goInApp(email)
+            }
+            .addOnFailureListener {
+                Toast.makeText(this, "Email or Password are wrong", Toast.LENGTH_SHORT).show()
+            }
+
     }
 
     fun goInApp(userName: String) {
@@ -83,11 +125,5 @@ class RegistrationActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    private fun isUserLegit(): Boolean {
-//        val username = username_login_et.text.toString()
-//        val password = password_login_et.text.toString()
 
-        return true
-
-    }
 }
