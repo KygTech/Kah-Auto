@@ -91,12 +91,12 @@
         <ImageView
             android:id="@+id/carFragmentImg"
             android:layout_width="280dp"
-            android:layout_height="320dp"
+            android:layout_height="200dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/carKm"
-            android:layout_marginTop="2dp"/>
+
+    />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

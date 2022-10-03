@@ -4,7 +4,6 @@ import android.content.Intent
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.core.view.isVisible
@@ -79,24 +78,21 @@ class RegistrationActivity : AppCompatActivity() {
         val password = password_sign_up_et.text.toString()
 
         if (email.isEmpty()) {
-            Toast.makeText(this, "Please write your email", Toast.LENGTH_SHORT).show()
+            makeToast("Please write your email")
         } else if (password.isEmpty() || password.length < 6) {
-            Toast.makeText(this, "Password must contain min 6 digits", Toast.LENGTH_SHORT).show()
+            makeToast("Password must contain min 6 digits")
         } else {
             if (email.contains("@") && password.length >= 6) {
                 firebaseAuth.createUserWithEmailAndPassword(email, password)
                     .addOnSuccessListener {
-                        Toast.makeText(this, "Success, you can login now", Toast.LENGTH_SHORT).show()
+                        makeToast("Success, you can login now")
                         displayLoginFragment()
                     }
                     .addOnFailureListener {
-                        Toast.makeText(
-                            this,
-                            "failed",                            Toast.LENGTH_SHORT
-                        ).show()
+                        makeToast("Failed")
                     }
-            }else{
-                Toast.makeText(this, "Email or password are not as required", Toast.LENGTH_SHORT).show()
+            } else {
+                makeToast("Email or password are not as required")
             }
 
         }
@@ -106,24 +102,31 @@ class RegistrationActivity : AppCompatActivity() {
     fun onLoginBtnClick(view: View) {
         val email = username_login_et.text.toString()
         val password = password_login_et.text.toString()
-        firebaseAuth.signInWithEmailAndPassword(email, password)
-            .addOnSuccessListener {
-                goInApp(email)
-            }
-            .addOnFailureListener {
-                Toast.makeText(this, "Email or Password are wrong", Toast.LENGTH_SHORT).show()
-            }
-
+        if (email.isEmpty()) {
+            makeToast("Email is missing")
+        } else if (password.isEmpty()) {
+            makeToast("Password is missing")
+        } else {
+            firebaseAuth.signInWithEmailAndPassword(email, password)
+                .addOnSuccessListener {
+                    goInApp(email)
+                }
+                .addOnFailureListener {
+                    makeToast("Email or Password are wrong")
+                }
+        }
     }
 
     fun goInApp(userName: String) {
         val editor = sharedPreferences.edit()
         editor.putLong("LAST_LOGIN", System.currentTimeMillis()).apply()
         editor.putString("USER_NAME", userName).apply()
-
         val intent = Intent(this, CarsActivity::class.java)
         startActivity(intent)
     }
 
+    private fun makeToast(text: String) {
+        Toast.makeText(this, text, Toast.LENGTH_SHORT).show()
+    }
 
 }

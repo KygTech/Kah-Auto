@@ -4,18 +4,21 @@ import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
+import android.app.PendingIntent.FLAG_IMMUTABLE
+import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.content.Context
 import android.content.Intent
-import android.util.Log
+import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.jey.kahauto.model.Car
 import com.jey.kahauto.model.Repository
 import com.jey.kahauto.ui.RegistrationActivity
 
+
 object NotificationManager {
 
-    val CHANNEL_ID = "CHANNEL_ID"
+    private const val CHANNEL_ID = "CHANNEL_ID"
 
 
     private fun createNotificationChannel(context: Context) {
@@ -31,7 +34,7 @@ object NotificationManager {
 
     fun display(context: Context, car: Car) {
         val appIntent = Intent(context, RegistrationActivity::class.java)
-        val pendingIntent = PendingIntent.getActivity(context, 0, appIntent, 0)
+        val pendingIntent = PendingIntent.getActivity(context, 0, appIntent, FLAG_IMMUTABLE)
 
         createNotificationChannel(context)
         val builder = NotificationCompat.Builder(context, CHANNEL_ID)
@@ -49,7 +52,20 @@ object NotificationManager {
     fun getServiceNotification(context: Context): Notification {
         createNotificationChannel(context)
         val appIntent = Intent(context, RegistrationActivity::class.java)
-        val pendingIntent = PendingIntent.getActivity(context, 0, appIntent, 0)
+
+      val pendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            PendingIntent.getActivity(
+                context,
+                0,
+                appIntent,
+                FLAG_IMMUTABLE
+            )
+        } else {
+            PendingIntent.getActivity(
+                context,
+                0, appIntent, FLAG_UPDATE_CURRENT
+            )
+        }
 
         return NotificationCompat.Builder(context, CHANNEL_ID)
             .setContentTitle("My Service Notification")
@@ -65,14 +81,9 @@ object NotificationManager {
     fun displayOver24h(context: Context): Notification {
         createNotificationChannel(context)
         val appIntent = Intent(context, RegistrationActivity::class.java)
-        val pendingIntent = PendingIntent.getActivity(context, 0, appIntent, 0)
+        val pendingIntent = PendingIntent.getActivity(context, 0, appIntent, FLAG_IMMUTABLE)
 
-        val carList = Repository.getInstance(context).getAllCarsAsLiveData().value
-
-        if (carList != null) {
-            for (car in carList)
-                Log.d("test", "${car.company}")
-        }
+            val carList = Repository.getInstance(context).getAllCarsAsLiveData().value
 
         var counter = 0
 
@@ -88,7 +99,7 @@ object NotificationManager {
             return NotificationCompat.Builder(context, CHANNEL_ID)
                 .setContentTitle("Storage update")
                 .setSmallIcon(R.drawable.car_icon)
-                .setContentText(" ${counter} has been added 24h ago")
+                .setContentText(" $counter has been added 24h ago")
                 .setAutoCancel(true)
                 .setContentIntent(pendingIntent)
                 .build()

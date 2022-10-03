@@ -59,9 +59,7 @@ class CarAdapter(
         }
 
         holder.btnDelete.setOnClickListener {
-            thread(start = true) {
                 onTrashClick(currentCar)
-            }
             notifyItemRemoved(position)
         }
 

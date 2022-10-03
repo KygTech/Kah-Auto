@@ -6,15 +6,21 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import androidx.activity.viewModels
+import androidx.lifecycle.viewModelScope
 import com.jey.kahauto.model.Car
 import com.jey.kahauto.NotificationManager
 import com.jey.kahauto.R
 import com.jey.kahauto.model.Repository
+import com.jey.kahauto.viewmodel.CarsViewModel
 import kotlinx.android.synthetic.main.activity_car_add.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlin.concurrent.thread
 
 class CarAddActivity : AppCompatActivity() {
 
+    private val carsViewModel: CarsViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,10 +61,9 @@ class CarAddActivity : AppCompatActivity() {
                 carFormOwners.text.toString(),
                 carFormKm.text.toString()
             )
-            thread(start = true) {
-                Repository.getInstance(this).addCar(car)
+            carsViewModel.viewModelScope.launch(Dispatchers.IO) {
+                carsViewModel.addCar(car)
             }
-            NotificationManager.display(this, car)
             return true
         }
         return false
@@ -83,6 +88,5 @@ class CarAddActivity : AppCompatActivity() {
         carFormOwners.text.clear()
         carFormKm.text.clear()
     }
-
 
 }
