@@ -7,30 +7,19 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.viewModels
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.isVisible
-import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.ViewModel
 import com.jey.kahauto.model.ApiResponse
 import com.jey.kahauto.model.Car
 import com.jey.kahauto.model.IMAGE_TYPE
 import com.jey.kahauto.model.Repository
-import com.jey.kahauto.viewmodel.CarsViewModel
-import kotlinx.android.synthetic.main.dialog_choose_img.view.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.io.ByteArrayOutputStream
-import kotlin.concurrent.thread
-
 object ImagesManager {
 
 

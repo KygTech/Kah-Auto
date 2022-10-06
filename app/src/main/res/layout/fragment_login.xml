@@ -13,7 +13,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:text="Welcome"
+        android:text="Welcome to Kah-Auto"
         android:textColor="#624703"
         android:textSize="36sp"
         android:textStyle="bold"
@@ -35,9 +35,9 @@
         android:id="@+id/or_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Or"
+        android:text="Or login by email and password"
         android:textStyle="bold"
-        android:textSize="30sp"
+        android:textSize="24dp"
         android:textColor="#624703"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -47,7 +47,7 @@
 
 
     <EditText
-        android:id="@+id/username_login_et"
+        android:id="@+id/email_login_et"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
@@ -67,12 +67,8 @@
         android:inputType="textPassword"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/username_login_et"
+        app:layout_constraintTop_toBottomOf="@id/email_login_et"
         />
-
-
-
-
 
 
 

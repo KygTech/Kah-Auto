@@ -30,13 +30,13 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="22dp"
         android:textColor="@color/teal_200"
-        android:textSize="20dp"
+        android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/login_button"
+    android:id="@+id/login_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="onLoginBtnClick"
@@ -50,13 +50,14 @@
         android:id="@+id/btnSignUp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="sign up"
         android:onClick="onSignUpBtnClick"
+        android:text="sign up"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/login_signup_tv"
         android:layout_marginBottom="12dp"
         android:visibility="invisible"/>
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -3,20 +3,15 @@ package com.jey.kahauto.ui
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Button
-import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.lifecycle.viewModelScope
 import com.jey.kahauto.model.Car
-import com.jey.kahauto.NotificationManager
 import com.jey.kahauto.R
-import com.jey.kahauto.model.Repository
 import com.jey.kahauto.viewmodel.CarsViewModel
 import kotlinx.android.synthetic.main.activity_car_add.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlin.concurrent.thread
 
 class CarAddActivity : AppCompatActivity() {
 
@@ -55,7 +50,7 @@ class CarAddActivity : AppCompatActivity() {
             Toast.makeText(this, "Add car km", Toast.LENGTH_SHORT).show()
         } else {
             val car = Car(
-                carFormKm.text.toString(),
+                carFormCompany.text.toString(),
                 carFormModel.text.toString(),
                 carFormYear.text.toString(),
                 carFormOwners.text.toString(),

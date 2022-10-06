@@ -12,23 +12,30 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.viewModelScope
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 import com.jey.kahauto.R
+import com.jey.kahauto.model.Repository
+import com.jey.kahauto.model.User
 import com.jey.kahauto.viewmodel.RegistrationViewModel
+import com.jey.kahauto.viewmodel.UsersViewModel
 import kotlinx.android.synthetic.main.fragment_login.*
 import kotlinx.android.synthetic.main.fragment_login.google_sign_in_btn
-import kotlinx.android.synthetic.main.fragment_sing_up.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class LoginFragment : Fragment() {
 
-private val registrationViewModel: RegistrationViewModel by activityViewModels()
+    private val registrationViewModel: RegistrationViewModel by activityViewModels()
+    private val usersViewModel: UsersViewModel by viewModels()
+
     private lateinit var googleGetContent: ActivityResultLauncher<Intent>
     private val firebaseAuth = FirebaseAuth.getInstance()
 
@@ -46,13 +53,16 @@ private val registrationViewModel: RegistrationViewModel by activityViewModels()
 
     override fun onStart() {
         super.onStart()
-        username_login_et.setText(registrationViewModel.currentUsername)
-        username_login_et.addTextChangedListener {
-            registrationViewModel.currentUsername = it.toString()
+        email_login_et.setText(registrationViewModel.currentEmail)
+        email_login_et.addTextChangedListener {
+            registrationViewModel.currentEmail = it.toString()
+        }
+        password_login_et.setText(registrationViewModel.currentPassword)
+        password_login_et.addTextChangedListener {
+            registrationViewModel.currentPassword = it.toString()
         }
         onClickGoogleSignInBtn()
     }
-
 
 
     private fun onClickGoogleSignInBtn() {
@@ -73,6 +83,7 @@ private val registrationViewModel: RegistrationViewModel by activityViewModels()
             GoogleSignIn.getSignedInAccountFromIntent(content.data)
         task.addOnSuccessListener {
             loginOrSignUpToFirebase(it)
+
         }
         task.addOnFailureListener {
             displayToast("Choose another way to sign in")
@@ -84,6 +95,7 @@ private val registrationViewModel: RegistrationViewModel by activityViewModels()
             .addOnSuccessListener {
                 if (it.signInMethods.isNullOrEmpty()) {
                     registerToKahAutoFirebase(googleSignInAccount)
+
                 } else {
                     getIntoApp(googleSignInAccount.displayName.toString())
                 }
@@ -96,11 +108,31 @@ private val registrationViewModel: RegistrationViewModel by activityViewModels()
         firebaseAuth.signInWithCredential(authCredential)
             .addOnSuccessListener {
                 getIntoApp(googleSignInAccount.displayName.toString())
+
+                //UsersViewModel | RegistrationViewModel  viewModelScope problem. *********************************
+              GlobalScope.launch(Dispatchers.IO) {
+                    val username = googleSignInAccount.displayName.toString()
+                    val email = googleSignInAccount.email.toString()
+                    val firstName = googleSignInAccount.givenName.toString()
+                    val lastName = googleSignInAccount.familyName.toString()
+                    val newUser = User(
+                        firstName,
+                        lastName,
+                        "*****",
+                        email,
+                        System.currentTimeMillis(),
+                        "Google SignIn",
+                        username
+                    )
+                    Repository.getInstance(requireActivity()).addUser(newUser)
+
+
+                }
             }
             .addOnFailureListener { displayToast("Please try again later - Exception: ${it.message}") }
     }
 
-    private fun getIntoApp(userName:String) {
+    private fun getIntoApp(userName: String) {
         (requireActivity() as RegistrationActivity).goInApp(userName)
     }
 
@@ -108,5 +140,5 @@ private val registrationViewModel: RegistrationViewModel by activityViewModels()
         Toast.makeText(requireActivity(), text, Toast.LENGTH_SHORT).show()
     }
 
-
+ 
 }

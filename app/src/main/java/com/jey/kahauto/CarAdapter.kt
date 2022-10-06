@@ -13,7 +13,6 @@ import com.bumptech.glide.Glide
 import com.jey.kahauto.model.Car
 import com.jey.kahauto.model.IMAGE_TYPE
 import kotlinx.android.synthetic.main.car_item_row.view.*
-import kotlin.concurrent.thread
 
 class CarAdapter(
     private val cars: MutableList<Car>,
