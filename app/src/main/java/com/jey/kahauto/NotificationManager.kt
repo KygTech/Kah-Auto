@@ -78,33 +78,33 @@ object NotificationManager {
     }
 
 
-    fun displayOver24h(context: Context): Notification {
-        createNotificationChannel(context)
-        val appIntent = Intent(context, RegistrationActivity::class.java)
-        val pendingIntent = PendingIntent.getActivity(context, 0, appIntent, FLAG_IMMUTABLE)
-
-            val carList = Repository.getInstance(context).getAllCarsAsLiveData().value
-
-        var counter = 0
-
-        if (counter == 0) {
-            return NotificationCompat.Builder(context, CHANNEL_ID)
-                .setContentTitle("Storage update")
-                .setSmallIcon(R.drawable.car_icon)
-                .setContentText(" one has been added 24h ago")
-                .setAutoCancel(true)
-                .setContentIntent(pendingIntent)
-                .build()
-        } else {
-            return NotificationCompat.Builder(context, CHANNEL_ID)
-                .setContentTitle("Storage update")
-                .setSmallIcon(R.drawable.car_icon)
-                .setContentText(" $counter has been added 24h ago")
-                .setAutoCancel(true)
-                .setContentIntent(pendingIntent)
-                .build()
-        }
-    }
+//    fun displayOver24h(context: Context): Notification {
+//        createNotificationChannel(context)
+//        val appIntent = Intent(context, RegistrationActivity::class.java)
+//        val pendingIntent = PendingIntent.getActivity(context, 0, appIntent, FLAG_IMMUTABLE)
+//
+//            val carList = Repository.getInstance(context).getAllCarsAsLiveData().value
+//
+//        var counter = 0
+//
+//        if (counter == 0) {
+//            return NotificationCompat.Builder(context, CHANNEL_ID)
+//                .setContentTitle("Storage update")
+//                .setSmallIcon(R.drawable.car_icon)
+//                .setContentText(" one has been added 24h ago")
+//                .setAutoCancel(true)
+//                .setContentIntent(pendingIntent)
+//                .build()
+//        } else {
+//            return NotificationCompat.Builder(context, CHANNEL_ID)
+//                .setContentTitle("Storage update")
+//                .setSmallIcon(R.drawable.car_icon)
+//                .setContentText(" $counter has been added 24h ago")
+//                .setAutoCancel(true)
+//                .setContentIntent(pendingIntent)
+//                .build()
+//        }
+//    }
 }
 
 

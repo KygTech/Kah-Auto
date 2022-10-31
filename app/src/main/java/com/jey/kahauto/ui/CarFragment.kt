@@ -23,6 +23,7 @@ class CarFragment : Fragment(R.layout.fragment_car_item_display) {
 
 
 
+
         carCompany.text = "Company  -  $carCompanyFragment"
         carModel.text = "Model  -  $carModelFragment"
         carYear.text = "Year  -  $carYearFragment"

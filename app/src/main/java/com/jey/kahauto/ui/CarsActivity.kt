@@ -2,11 +2,12 @@ package com.jey.kahauto.ui
 
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -21,40 +22,57 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.jey.kahauto.*
-import com.jey.kahauto.model.Car
-import com.jey.kahauto.model.IMAGE_TYPE
+import com.jey.kahauto.model.*
 import com.jey.kahauto.viewmodel.CarsViewModel
 import kotlinx.android.synthetic.main.activity_cars.*
+import kotlinx.android.synthetic.main.dialog_add_car.view.*
 import kotlinx.android.synthetic.main.dialog_choose_img.view.*
+
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 
 class CarsActivity : AppCompatActivity() {
-    private lateinit var sharedPreferences: SharedPreferences
+
     private val carsViewModel: CarsViewModel by viewModels()
     private val firebaseAuth = FirebaseAuth.getInstance()
-
+    private val sharedPreferences = SharedPManager.getInstance(this)
 
     private var carFragment = CarFragment()
     private var chosenCar: Car? = null
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_cars)
+
         val serviceIntent = Intent(this, CarsService::class.java)
         ContextCompat.startForegroundService(this, serviceIntent)
+
+
     }
 
     override fun onStart() {
         super.onStart()
-        createRecyclerView()
-        btnAddCar()
-        removeCarDisplayInfo()
-        sharedPreferences = getSharedPreferences(R.string.app_name.toString(), MODE_PRIVATE)
 
-        val username = sharedPreferences.getString("USER_NAME", "")
-        hey_user.text = "Hello, $username"
+        removeCarDisplayInfo()
+        createRecyclerView()
+
+        val sellersListOwner = intent.extras?.get("owner")
+        if (sellersListOwner != null) {
+            carsViewModel.viewModelScope.launch {
+                val sellersList = carsViewModel.getSellersListByOwner(sellersListOwner as String)
+                carsViewModel.setCurrentSellerList(sellersList)
+                val userName = sellersList.user.userName
+                val userEmail = sellersList.user.email
+
+                seller_list_title.text = " $sellersListOwner list By ${userName.lowercase()} "
+                onBtnClickAddCar(userEmail)
+            }
+        }
+
+
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -73,12 +91,11 @@ class CarsActivity : AppCompatActivity() {
     }
 
     private fun signOutFromApp() {
-
         GoogleSignIn.getClient(
             this,
             GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).build()
         ).signOut()
-        sharedPreferences.edit().remove("LAST_LOGIN").apply()
+        sharedPreferences.sharedPrefs.edit().remove("LAST_LOGIN").apply()
         firebaseAuth.signOut()
         val intent = Intent(this, RegistrationActivity::class.java)
         startActivity(intent)
@@ -87,16 +104,40 @@ class CarsActivity : AppCompatActivity() {
 
     private val getContentFromGallery = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
-    ) { result -> ImagesManager.onImageResultFromGallery(result, chosenCar!!, this) }
+    ) { result ->
+        val context = this
+        carsViewModel.viewModelScope.launch(Dispatchers.IO) {
+            ImagesManager.onImageResultFromGallery(
+                result,
+                chosenCar!!,
+                context,
+                carsViewModel.sellersListLiveData.value!!
+            )
+        }
+    }
+
 
     private val getContentFromCamera = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
-    ) { result -> ImagesManager.onImageResultFromCamera(result, chosenCar!!, this) }
+    ) { result ->
+        ImagesManager.onImageResultFromCamera(
+            result,
+            chosenCar!!,
+            this,
+            carsViewModel.sellersListLiveData.value!!
+        )
+    }
 
 
     private fun onAddImgClick(): (car: Car) -> Unit = { car ->
         chosenCar = car
-        displayCustomImgDialog(car, getContentFromGallery, getContentFromCamera, this)
+        displayCustomImgDialog(
+            car,
+            getContentFromGallery,
+            getContentFromCamera,
+            this,
+            carsViewModel.sellersListLiveData.value!!
+        )
     }
 
     private fun createRecyclerView() {
@@ -110,18 +151,76 @@ class CarsActivity : AppCompatActivity() {
         car_rv.adapter = carAdapter
         car_rv.layoutManager = LinearLayoutManager(this)
 
-        carsViewModel.carsListLiveData.observe(this) {
-            carAdapter.carsListViewUpdate(it)
+        carsViewModel.sellersListLiveData.observe(this) { sellersList ->
+            carsViewModel.getCarsLiveData(sellersList).observe(this) {
+                carAdapter.carsListViewUpdate(it.carsList)
+            }
         }
-
-
     }
 
-    private fun btnAddCar() {
+
+    private fun onBtnClickAddCar(userEmail: String) {
+        btnAddCar.isVisible = userEmail == sharedPreferences.getMyUser().email
         btnAddCar.setOnClickListener {
-            val intent = Intent(this, CarAddActivity::class.java)
-            startActivity(intent)
+            displayAddCarDialog()
         }
+    }
+
+    private fun addNewCar(view: View): Boolean {
+
+        val carCompany = view.carFormCompany.text
+        val carModel = view.carFormModel.text
+        val carYear = view.carFormYear.text
+        val carOwners = view.carFormOwners.text
+        val carKm = view.carFormKm.text
+
+        if (carCompany.isEmpty()) {
+            Toast.makeText(this, "Add car company", Toast.LENGTH_SHORT).show()
+        } else if (carModel.isEmpty()) {
+            Toast.makeText(this, "Add car model", Toast.LENGTH_SHORT).show()
+        } else if (carYear.isEmpty()) {
+            Toast.makeText(this, "Add car year", Toast.LENGTH_SHORT).show()
+        } else if (carOwners.isEmpty()) {
+            Toast.makeText(this, "Add car owners", Toast.LENGTH_SHORT).show()
+        } else if (carKm.isEmpty()) {
+            Toast.makeText(this, "Add car km", Toast.LENGTH_SHORT).show()
+        } else {
+            val car = Car(
+                carCompany.toString(),
+                carModel.toString(),
+                carYear.toString(),
+                carOwners.toString(),
+                carKm.toString()
+            )
+            carsViewModel.viewModelScope.launch(Dispatchers.IO) {
+                carsViewModel.addCar(car)
+            }
+            return true
+        }
+        return false
+    }
+
+    private fun displayAddCarDialog() {
+
+        val mDialogView = layoutInflater
+            .inflate(R.layout.dialog_add_car, null, false)
+
+        val dialog = AlertDialog.Builder(this)
+            .setView(mDialogView)
+            .create()
+
+        val btnFormDone = mDialogView.btnFormDone
+        btnFormDone.setOnClickListener {
+            if (addNewCar(mDialogView)) {
+                dialog.cancel()
+            }
+
+        }
+
+        val btnFormCancel = mDialogView.btnFormCancel
+        btnFormCancel.setOnClickListener { dialog.cancel() }
+        dialog.show()
+
     }
 
     private fun deleteCarItem(): (car: Car) -> Unit = {
@@ -155,12 +254,12 @@ class CarsActivity : AppCompatActivity() {
         }
     }
 
-
     private fun displayCustomImgDialog(
         car: Car,
         getContentFromGallery: ActivityResultLauncher<Intent>,
         getContentFromCamera: ActivityResultLauncher<Intent>,
-        context: Context
+        context: Context,
+        sellersList: SellersList
     ) {
         carsViewModel.viewModelScope.launch(Dispatchers.Main) {
             val mDialogView = LayoutInflater
@@ -185,7 +284,11 @@ class CarsActivity : AppCompatActivity() {
             val btnNetwork = mDialogView.dialog_img_from_network
             btnNetwork.setOnClickListener {
                 carsViewModel.viewModelScope.launch(Dispatchers.IO) {
-                    ImagesManager.getImageFromApi(car, context)
+                    ImagesManager.getImageFromApi(
+                        car,
+                        context,
+                        carsViewModel.sellersListLiveData.value!!
+                    )
                 }
                 dialog.cancel()
             }
@@ -204,14 +307,15 @@ class CarsActivity : AppCompatActivity() {
                 mDialogView.dialog_remove_title.isVisible = false
             }
 
-
             val btnRemoveImg = mDialogView.dialog_remove_img
             btnRemoveImg.setOnClickListener {
                 carsViewModel.viewModelScope.launch(Dispatchers.IO) {
-                    carsViewModel.updateCarImg(
+                    ImagesManager.addImageToCar(
                         car,
                         R.drawable.camera_icon_two.toString(),
-                        IMAGE_TYPE.URI
+                        IMAGE_TYPE.URI,
+                        context,
+                        sellersList
                     )
                 }
                 dialog.cancel()
@@ -221,6 +325,7 @@ class CarsActivity : AppCompatActivity() {
             btnCancel.setOnClickListener { dialog.cancel() }
         }
     }
+
 
 }
 

@@ -8,9 +8,12 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
+import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
+import com.jey.kahauto.FirebaseManager
 import com.jey.kahauto.R
 import com.jey.kahauto.model.Repository
+import com.jey.kahauto.model.SharedPManager
 import com.jey.kahauto.model.User
 import com.jey.kahauto.viewmodel.RegistrationViewModel
 import kotlinx.android.synthetic.main.activity_registration.*
@@ -23,11 +26,8 @@ import kotlinx.coroutines.launch
 class RegistrationActivity : AppCompatActivity() {
 
     private var isLoginFragment = true
-    private lateinit var sharedPreferences: SharedPreferences
     private val firebaseAuth = FirebaseAuth.getInstance()
     private val registrationViewModel: RegistrationViewModel by viewModels()
-
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,22 +35,17 @@ class RegistrationActivity : AppCompatActivity() {
         displayLoginFragment()
         setTextViewClickListener()
 
-
     }
 
     override fun onStart() {
         super.onStart()
-        sharedPreferences = getSharedPreferences(R.string.app_name.toString(), MODE_PRIVATE)
         calculateLastLogin()
-
-
     }
 
     private fun calculateLastLogin() {
-        val lastLogin = sharedPreferences.getLong("LAST_LOGIN", -1)
+        val lastLogin = SharedPManager.getInstance(this).getLastLogin()
         if (lastLogin != -1L && System.currentTimeMillis() - lastLogin < 3600000) {
-            val intent = Intent(this, CarsActivity::class.java)
-            startActivity(intent)
+            openSellersActivity()
         }
     }
 
@@ -81,7 +76,7 @@ class RegistrationActivity : AppCompatActivity() {
         btnSignUp.isVisible = false
         isLoginFragment = true
         login_signup_tv.text = "Not a member yet? click here to SignUp"
-             val loginFragment = LoginFragment()
+        val loginFragment = LoginFragment()
         supportFragmentManager.beginTransaction()
             .replace(R.id.registration_fragment_view, loginFragment).commit()
     }
@@ -104,14 +99,14 @@ class RegistrationActivity : AppCompatActivity() {
         } else {
             firebaseAuth.createUserWithEmailAndPassword(email, password)
                 .addOnSuccessListener {
-                    displayLoginFragment()
-                    makeToast("Success, you can login now")
-
-                    //UsersViewModel | RegistrationViewModel problem. *********************************
-
-                 GlobalScope.launch(Dispatchers.IO) {
-                        val newUser = User(firstName, lastName, password.encodeToByteArray().toString(),email)
-                    Repository.getInstance(applicationContext).addUser(newUser)
+                    registrationViewModel.viewModelScope.launch(Dispatchers.IO) {
+                        val user = User(email, firstName, lastName)
+                        FirebaseManager.getInstance(applicationContext).addUser(user)
+                            .addOnSuccessListener {
+                                displayLoginFragment()
+                                makeToast("Success, you can login now")
+                            }
+                            .addOnFailureListener { "Something went wrong - Exception: ${it.message}" }
                     }
                 }
                 .addOnFailureListener {
@@ -133,14 +128,20 @@ class RegistrationActivity : AppCompatActivity() {
         } else {
             firebaseAuth.signInWithEmailAndPassword(email, password)
                 .addOnSuccessListener {
+                    registrationViewModel.viewModelScope.launch(Dispatchers.IO) {
+                        FirebaseManager.getInstance(applicationContext).getUser(email)
+                            .addOnSuccessListener {
+                                val myUser = User(
+                                    email,
+                                    it.get("firstname").toString(),
+                                    it.get("lastname").toString()
+                                )
+                                goInApp(myUser)
+                            }
+                            .addOnFailureListener {
+                                makeToast("Something went wrong - Exception ${it.message}")
+                            }
 
-                    //UsersViewModel | RegistrationViewModel problem. *********************************
-
-                    GlobalScope.launch(Dispatchers.IO) {
-                        val userList = Repository.getInstance(applicationContext).getAllUsers()
-                        for (user in userList)
-                            if (user.email == email)
-                                goInApp(user.userName)
                     }
                 }
                 .addOnFailureListener {
@@ -149,16 +150,19 @@ class RegistrationActivity : AppCompatActivity() {
         }
     }
 
-    fun goInApp(userName: String) {
-        val editor = sharedPreferences.edit()
-        editor.putLong("LAST_LOGIN", System.currentTimeMillis()).apply()
-        editor.putString("USER_NAME", userName).apply()
-        val intent = Intent(this, CarsActivity::class.java)
-        startActivity(intent)
+    fun goInApp(user: User) {
+        SharedPManager.getInstance(this).setMyUser(user)
+        SharedPManager.getInstance(this).setLastLogin()
+        openSellersActivity()
     }
+
 
     private fun makeToast(text: String) {
         Toast.makeText(this, text, Toast.LENGTH_SHORT).show()
     }
 
+    private fun openSellersActivity() {
+        val intent = Intent(this, SellersActivity::class.java)
+        startActivity(intent)
+    }
 }

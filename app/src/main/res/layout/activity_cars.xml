@@ -8,7 +8,7 @@
     android:id="@+id/activity_main">
 
 <TextView
-    android:id="@+id/hey_user"
+    android:id="@+id/seller_list_title"
     android:textSize="24sp"
     android:textStyle="bold"
     android:textColor="#6C0A8C"
@@ -31,18 +31,27 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.086" />
 
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/car_add_fragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="30dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.086" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/car_rv"
         android:layout_width="340dp"
         android:layout_height="500dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/hey_user"
+        app:layout_constraintTop_toBottomOf="@id/seller_list_title"
         android:layout_marginTop="20dp"
-
         />
-
-
 
     <Button
         android:id="@+id/btnAddCar"
@@ -52,6 +61,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

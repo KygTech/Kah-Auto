@@ -7,13 +7,11 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.appcompat.app.AppCompatActivity
-import com.jey.kahauto.model.ApiResponse
-import com.jey.kahauto.model.Car
-import com.jey.kahauto.model.IMAGE_TYPE
-import com.jey.kahauto.model.Repository
+import com.jey.kahauto.model.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import retrofit2.Call
@@ -35,7 +33,7 @@ object ImagesManager {
         getContent.launch(cameraIntent)
     }
 
-    fun onImageResultFromCamera(result: ActivityResult, chosenCar: Car, context: Context) {
+    fun onImageResultFromCamera(result: ActivityResult, chosenCar: Car, context: Context,sellersList:SellersList) {
         if (result.resultCode == AppCompatActivity.RESULT_OK) {
             val imageBitmap = result.data?.extras?.get("data") as Bitmap
             val bytes = ByteArrayOutputStream()
@@ -49,13 +47,13 @@ object ImagesManager {
             )
             val uri = Uri.parse(path)
             GlobalScope.launch {
-                addImageToCar(chosenCar, uri.toString(), IMAGE_TYPE.URI, context)
+                addImageToCar(chosenCar, uri.toString(), IMAGE_TYPE.URI, context, sellersList)
             }
         }
 
     }
 
-    fun onImageResultFromGallery(result: ActivityResult, chosenCar: Car, context: Context) {
+    fun onImageResultFromGallery(result: ActivityResult, chosenCar: Car, context: Context,sellersList:SellersList) {
         if (result.resultCode == AppCompatActivity.RESULT_OK) {
             val uri = result.data?.data
             if (uri != null) {
@@ -64,19 +62,24 @@ object ImagesManager {
                     Intent.FLAG_GRANT_READ_URI_PERMISSION
                 )
                 GlobalScope.launch {
-                    addImageToCar(chosenCar, uri.toString(), IMAGE_TYPE.URI, context)
+                    addImageToCar(chosenCar, uri.toString(), IMAGE_TYPE.URI, context,sellersList)
                 }
             }
         }
     }
 
-    fun addImageToCar(car: Car, imagePath: String, imageType: IMAGE_TYPE, context: Context) {
+    fun addImageToCar(car: Car, imagePath: String, imageType: IMAGE_TYPE, context: Context,sellersList: SellersList) {
 
-        //// May i do GlobalScope on this and delete the others?
-            Repository.getInstance(context).updateCarImg(car, imagePath, imageType)
+        sellersList.cars.carsList.forEach {
+            if (it.company == car.company) {
+                it.imagePath = imagePath
+                it.imageType = imageType
+            }
+        }
+            Repository.getInstance(context).updateCarImg(sellersList)
     }
 
-    fun getImageFromApi(car: Car, context: Context) {
+    fun getImageFromApi(car: Car, context: Context, sellersList: SellersList) {
         val retrofit = ApiInterface.create()
         retrofit.getImages(car.company).enqueue(object : Callback<ApiResponse> {
 
@@ -84,8 +87,9 @@ object ImagesManager {
                 val apiResponse = response.body()
                 val apiImage = apiResponse!!.imagesList[2]
                 GlobalScope.launch {
-                    addImageToCar(car, apiImage.imageUrl, IMAGE_TYPE.URL, context)
+                    addImageToCar(car, apiImage.imageUrl, IMAGE_TYPE.URL, context, sellersList)
                 }
+
             }
 
             override fun onFailure(call: Call<ApiResponse>, t: Throwable) {

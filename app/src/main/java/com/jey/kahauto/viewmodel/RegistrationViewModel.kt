@@ -10,6 +10,5 @@ import kotlinx.android.synthetic.main.activity_registration.*
 class RegistrationViewModel :ViewModel(){
 
     var currentEmail =""
-    var currentPassword =""
 
 }
