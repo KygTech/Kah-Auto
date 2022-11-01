@@ -9,5 +9,20 @@
     <color name="white">#FFFFFFFF</color>
     <color name="light_grey">#C2BEBE</color>
     <color name="dark_grey">#434040</color>
-
+    <color name="colorPrimary">#6200EE</color>
+    <color name="colorPrimaryDark">#3700B3</color>
+    <color name="colorAccent">#03DAC5</color>
+    <color name="yellow">#FFFF00</color>
+    <color name="hotPink">#FF69B4</color>
+    <color name="lime">#00FF00</color>
+    <color name="yellow_A200">#FFFF00</color>
+    <color name="transparent">#00000000</color>
+    <color name="red">#FF0000</color>
+    <color name="light_blue">#2196F3</color>
+    <color name="grey">#858585</color>
+    <color name="green100">#689f38</color>
+    <color name="orange90">#FD7044</color>
+    <color name="teal_600">#00897B</color>
+    <color name="teal_300">#4db6ac</color>
+    <color name="yellow_900">#F57F17</color>
 </resources>

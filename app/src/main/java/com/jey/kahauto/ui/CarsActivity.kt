@@ -70,37 +70,11 @@ class CarsActivity : AppCompatActivity() {
                 onBtnClickAddCar(userEmail)
             }
         }
-
-
-
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu, menu)
-        return super.onCreateOptionsMenu(menu)
-    }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.menu_logout -> {
-                signOutFromApp()
-            }
-            R.id.menu_about -> {}
-        }
-        return super.onOptionsItemSelected(item)
-    }
 
-    private fun signOutFromApp() {
-        GoogleSignIn.getClient(
-            this,
-            GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).build()
-        ).signOut()
-        sharedPreferences.sharedPrefs.edit().remove("LAST_LOGIN").apply()
-        firebaseAuth.signOut()
-        val intent = Intent(this, RegistrationActivity::class.java)
-        startActivity(intent)
-        finish()
-    }
+
 
     private val getContentFromGallery = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()

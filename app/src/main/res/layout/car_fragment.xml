@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="300dp"
+        android:layout_height="450dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:background="#D02EDFF5"
+        android:padding="6dp"
+        >
+
+        <TextView
+            android:id="@+id/infoTitle"
+            android:text="Information"
+            android:textSize="26dp"
+            android:textStyle="bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="5dp"/>
+
+        <TextView
+            android:id="@+id/carCompany"
+            android:text="Company - "
+            android:textSize="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/infoTitle"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="4dp"
+            />
+
+        <TextView
+            android:id="@+id/carModel"
+            android:text="Model - "
+            android:textSize="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/carCompany"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="4dp"
+            />
+
+        <TextView
+            android:id="@+id/carYear"
+            android:text="Year - "
+            android:textSize="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/carModel"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="4dp"
+            />
+
+        <TextView
+            android:id="@+id/carOwners"
+            android:text="Owners - "
+            android:textSize="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/carYear"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="4dp"
+            />
+
+        <TextView
+            android:id="@+id/carKm"
+            android:text="Km - "
+            android:textSize="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/carOwners"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="4dp"
+            />
+
+
+        <ImageView
+            android:id="@+id/carFragmentImg"
+            android:layout_width="280dp"
+            android:layout_height="320dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/carKm"
+            android:layout_marginTop="2dp"/>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -4,59 +4,60 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.RegistrationActivity">
+    tools:context=".ui.RegistrationActivity"
+   >
 
     <ImageView
         android:id="@+id/login_img"
         android:layout_width="match_parent"
         android:layout_height="200dp"
+        android:layout_marginTop="10dp"
         android:src="@drawable/car_login_img"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/registration_fragment_view"
-        android:layout_width="match_parent"
-        android:layout_height="460dp"
+    <TextView
+        android:id="@+id/login_title_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="Welcome to Kah-Auto"
+        android:textColor="#624703"
+        android:textSize="36sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/login_img" />
 
-    <TextView
-        android:id="@+id/login_signup_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="22dp"
-        android:textColor="@color/teal_200"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
     <Button
-    android:id="@+id/login_btn"
+        android:id="@+id/sign_in_btn"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="onLoginBtnClick"
-        android:text="Login"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_height="57dp"
+        android:layout_marginTop="12dp"
+        android:drawableLeft="@android:drawable/ic_dialog_email"
+        android:text="Sign in"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:onClick="onSignInBtnClick"
+        android:textSize="13sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/login_signup_tv"
-        android:layout_marginBottom="12dp"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/login_title_tv"
+        />
 
-    <Button
-        android:id="@+id/btnSignUp"
+    <com.google.android.gms.common.SignInButton
+        android:id="@+id/google_sign_in_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="onSignUpBtnClick"
-        android:text="sign up"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="8dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/login_signup_tv"
-        android:layout_marginBottom="12dp"
-        android:visibility="invisible"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/sign_in_btn"
+        />
+
+
 
 
 
