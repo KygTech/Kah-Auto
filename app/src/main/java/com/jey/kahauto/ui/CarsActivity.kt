@@ -54,7 +54,7 @@ class CarsActivity : AppCompatActivity() {
         super.onStart()
 
         removeCarDisplayInfo()
-        createRecyclerView()
+
 
         val sellerListTitle = intent.extras?.get("listTitle")
         if (sellerListTitle != null) {
@@ -62,17 +62,20 @@ class CarsActivity : AppCompatActivity() {
                 val sellersList = carsViewModel.getSellersListByTitle(sellerListTitle as String)
                 carsViewModel.setCurrentSellerList(sellersList)
 
-                val userName = sellersList.participants.usersList[0].userName
                 val participantsList = sellersList.participants.usersList
-
-                seller_list_title.text = " $sellerListTitle list By ${userName.lowercase()} "
-                onBtnClickAddCar(participantsList)
+                createRecyclerView(participantsList)
+                seller_list_title.text = " ${sellerListTitle.uppercase()}  "
+                onBtnClickAddCar()
+             if(!checkCurrentParticipants(participantsList))
+                 closeButtonsVisible()
             }
         }
     }
 
-
-
+    private fun closeButtonsVisible(){
+        add_user_iv.isVisible = false
+        btnAddCar.isVisible = false
+    }
 
 
     private val getContentFromGallery = registerForActivityResult(
@@ -113,13 +116,14 @@ class CarsActivity : AppCompatActivity() {
         )
     }
 
-    private fun createRecyclerView() {
+    private fun createRecyclerView(participantsList: ArrayList<User>) {
         val carAdapter = CarAdapter(
             arrayListOf(),
             displayCarInfo(),
             deleteCarItem(),
             onAddImgClick(),
-            this
+            this,
+            checkCurrentParticipants(participantsList)
         )
         car_rv.adapter = carAdapter
         car_rv.layoutManager = LinearLayoutManager(this)
@@ -128,13 +132,14 @@ class CarsActivity : AppCompatActivity() {
             carsViewModel.getCarsLiveData(sellersList).observe(this) {
                 carAdapter.carsListViewUpdate(it.carsList)
             }
-            carsViewModel.getUserLiveData(sellersList).observe(this){
+            carsViewModel.getUserLiveData(sellersList).observe(this) {
                 users_layout_id.removeAllViews()
-                if(it !=null){
-                    for(user in it.usersList){
+                if (it != null) {
+                    for (user in it.usersList) {
                         val textView = TextView(this)
-                        textView.text= user.firstName.first().toString() + user.lastName.first().toString()
-                        textView.setPadding(20)
+                        textView.text =
+                            user.firstName.first().toString() + user.lastName.first().toString()
+                        textView.setPadding(10)
                         users_layout_id.addView(textView)
                     }
                 }
@@ -142,19 +147,16 @@ class CarsActivity : AppCompatActivity() {
         }
     }
 
-    private fun checkParticipants(participantsList: ArrayList<User>) :Boolean {
+    private fun checkCurrentParticipants(participantsList: ArrayList<User>): Boolean {
         participantsList.forEach {
-            if (it.email == sharedPreferences.getMyUser().email){
+            if (it.email == sharedPreferences.getMyUser().email) {
                 return true
             }
         }
         return false
     }
 
-    private fun onBtnClickAddCar(participantsList: ArrayList<User>) {
-        if(checkParticipants(participantsList)){
-            btnAddCar.isVisible=true
-        }
+    private fun onBtnClickAddCar() {
         btnAddCar.setOnClickListener {
             displayAddCarDialog()
         }
@@ -325,21 +327,48 @@ class CarsActivity : AppCompatActivity() {
         displayAddUserAlertDialog()
     }
 
+    fun checkParticipantsInSellsList(participants: Participants, userEmail:String): Boolean {
+        for (user in participants.usersList) {
+            if(user.email == userEmail){
+                return true
+            }
+        }
+        return false
+    }
+
     private fun displayAddUserAlertDialog() {
         val sellerListEditText = EditText(this)
         val alertDialogBuilder = AlertDialog.Builder(this)
         alertDialogBuilder.setTitle("Add participant")
-        alertDialogBuilder.setMessage("Write here the user's email")
+        alertDialogBuilder.setMessage("Write the user's email")
         alertDialogBuilder.setView(sellerListEditText)
         alertDialogBuilder.setPositiveButton("Add") { dialogInterface: DialogInterface, i: Int ->
             val userEmail = sellerListEditText.text.toString()
-            carsViewModel.viewModelScope.launch {
-                carsViewModel.addUser(applicationContext, userEmail)
+            if (userEmail.isNotEmpty()) {
+                val participantsList =
+                    carsViewModel.sellersListLiveData.value!!.participants
+
+               if(checkParticipantsInSellsList(participantsList, userEmail)){
+                        Toast.makeText(
+                            this,
+                            "User is already participant in the list",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }else {
+                   carsViewModel.viewModelScope.launch {
+                       carsViewModel.addUser(applicationContext, userEmail)
+                   }
+               }
+            } else {
+                Toast.makeText(applicationContext, "Email field if empty", Toast.LENGTH_SHORT)
+                    .show()
             }
         }
         alertDialogBuilder.setNegativeButton("Cancel") { dialogInterface: DialogInterface, i: Int ->
+            dialogInterface.cancel()
         }
         alertDialogBuilder.show()
     }
+
 }
 

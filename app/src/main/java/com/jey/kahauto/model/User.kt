@@ -13,6 +13,7 @@ data class User(
     @ColumnInfo(name = "createdAt") var createdAt: Long = System.currentTimeMillis(),
     @ColumnInfo(name = "createdBy") var createdBy: String = "Kah-Auto SignIn",
     @ColumnInfo(name = "username") var userName: String = "$firstName $lastName"
-
-
 )
+{
+    constructor() : this("","","")
+}

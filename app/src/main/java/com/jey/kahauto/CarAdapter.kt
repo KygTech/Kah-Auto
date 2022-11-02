@@ -8,10 +8,12 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.jey.kahauto.model.Car
 import com.jey.kahauto.model.IMAGE_TYPE
+import com.jey.kahauto.model.Participants
 import kotlinx.android.synthetic.main.car_item_row.view.*
 
 class CarAdapter(
@@ -19,7 +21,8 @@ class CarAdapter(
     val onCarClick: (Car) -> Unit,
     val onTrashClick: (Car) -> Unit,
     val onAddImgClick: (Car) -> Unit,
-    val context: Context
+    val context: Context,
+    val checkCurrentParticipants: Boolean
 ) : RecyclerView.Adapter<CarAdapter.CarsViewHolder>() {
 
     class CarsViewHolder(carView: View) : RecyclerView.ViewHolder(carView) {
@@ -45,6 +48,10 @@ class CarAdapter(
         val currentCar = cars[position]
         holder.tViewCar.text = "${currentCar.company} - ${currentCar.model}"
 
+       if (!checkCurrentParticipants){
+           holder.addImg.isVisible=false
+           holder.btnDelete.isVisible=false
+       }
         if (currentCar.imageType != null) {
             if (currentCar.imageType == IMAGE_TYPE.URI) {
                 holder.addImg.setImageURI(Uri.parse(currentCar.imagePath))

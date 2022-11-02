@@ -11,31 +11,50 @@
     android:id="@+id/seller_list_title"
     android:textSize="24sp"
     android:textStyle="bold"
-    android:textColor="#6C0A8C"
+    android:textColor="#0A64BF"
     android:layout_marginTop="13dp"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintTop_toTopOf="parent"/>
+    app:layout_constraintTop_toTopOf="parent"
+    />
+
+    <TextView
+        android:id="@+id/list_owners"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="@color/teal_700"
+        android:layout_marginTop="12dp"
+        android:text="Owners:"
+        android:layout_marginStart="7dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toEndOf="@id/add_user_iv"
+        app:layout_constraintTop_toBottomOf="@id/seller_list_title"
+        />
 
 
     <ImageView
         android:id="@+id/add_user_iv"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         app:srcCompat="@android:drawable/ic_menu_add"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/seller_list_title"
-        android:onClick="addUserOnClick"/>
+        android:layout_marginTop="5dp"
+        android:onClick="addUserOnClick"
+     />
 
     <HorizontalScrollView
         android:id="@+id/scrollPartition"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:scrollbars="none"
-        app:layout_constraintStart_toEndOf="@id/add_user_iv"
-        app:layout_constraintTop_toBottomOf="@id/seller_list_title">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/list_owners"
+        android:layout_marginStart="7dp"
+        >
 
         <LinearLayout
             android:id="@+id/users_layout_id"
@@ -45,14 +64,12 @@
             android:orientation="horizontal"
             android:paddingLeft="4dp"
             android:paddingRight="4dp"
-            android:scrollbars="none">
+            android:scrollbars="none"
+         >
 
         </LinearLayout>
 
     </HorizontalScrollView>
-
-
-
 
 
     <androidx.fragment.app.FragmentContainerView
@@ -72,11 +89,12 @@
         android:id="@+id/car_rv"
         android:layout_width="340dp"
         android:layout_height="500dp"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="15dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.492"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/add_user_iv" />
+        app:layout_constraintTop_toBottomOf="@id/scrollPartition"
+        />
 
     <Button
         android:id="@+id/btnAddCar"

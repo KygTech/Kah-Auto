@@ -225,7 +225,7 @@ class RegistrationActivity : AppCompatActivity() {
             firebaseAuth.createUserWithEmailAndPassword(email, password)
                 .addOnSuccessListener {
                     registrationViewModel.viewModelScope.launch(Dispatchers.IO) {
-                        val user = User(email, firstName, lastName)
+                        val user = User(email,firstName,lastName)
                         FirebaseManager.getInstance(applicationContext).addUser(user)
                             .addOnSuccessListener {
                           goInApp(user)
