@@ -39,15 +39,15 @@ class FirebaseManager private constructor(context: Context) {
         return db.collection("users").document(newUser.email).set(newUser)
     }
 
+
+
     fun updateSellersList(sellersList: SellersList) {
-        db.collection("sellersList").document(sellersList.owner).set(sellersList)
+        db.collection("sellersList").document(sellersList.listTitle).set(sellersList)
     }
-
-
-
 
     fun getAllSellersLists(): Task<QuerySnapshot> {
         return db.collection("sellersList").get()
     }
+
 
 }

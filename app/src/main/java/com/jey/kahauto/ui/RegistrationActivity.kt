@@ -160,6 +160,7 @@ class RegistrationActivity : AppCompatActivity() {
         val signUpBtn = myDialogView.sign_up_btn
         signUpBtn.setOnClickListener {
             onSignUpBtnClick(myDialogView)
+
         }
 
         val closeDialog = myDialogView.close_sign_up
@@ -204,7 +205,8 @@ class RegistrationActivity : AppCompatActivity() {
         }
     }
 
-    fun onSignUpBtnClick(myDialogView: View) {
+    private fun onSignUpBtnClick(myDialogView: View) {
+
 
         val firstName = myDialogView.first_name_et.text.toString()
         val lastName = myDialogView.last_name_et.text.toString()
@@ -214,7 +216,7 @@ class RegistrationActivity : AppCompatActivity() {
         if (firstName.length < 2) {
             displayToast("First name ,  min 2 digits.")
         } else if (lastName.length < 2) {
-            displayToast("Last name, min 6 digits")
+            displayToast("Last name, min 2 digits")
         } else if (password.length < 6) {
             displayToast("Password must contain min 6 digits")
         } else if (email.isEmpty() || !email.contains("@")) {

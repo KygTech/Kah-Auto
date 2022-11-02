@@ -18,16 +18,19 @@ interface SellersListDao {
     @Query("Select * from sellersListTable")
     fun getAllSellersLists(): LiveData<List<SellersList>>
 
-    @Query("UPDATE sellersListTable SET carsList=:cars WHERE owner = :owner")
-    fun updateCarsList(owner: String, cars: CarsList)
+    @Query("UPDATE sellersListTable SET cars=:cars WHERE listTitle = :listTitle")
+    fun updateCarsList(listTitle: String, cars: CarsList)
 
-    @Query("Select carsList from sellersListTable where owner = :owner")
-    fun getAllCars(owner: String): LiveData<CarsList>
+    @Query("Select cars from sellersListTable where listTitle = :listTitle")
+    fun getAllCars(listTitle: String): LiveData<CarsList>
 
-    @Query("Select * from sellersListTable where owner = :owner")
-    fun getSellersListByOwner(owner: String): SellersList
-
-
+    @Query("Select * from sellersListTable where listTitle = :listTitle")
+    fun getSellersListByTitle(listTitle: String): SellersList
 
 
+    @Query("UPDATE sellersListTable SET participants=:participants WHERE listTitle = :listTitle")
+    fun updateParticipantsList(listTitle: String, participants: Participants)
+
+    @Query("Select participants from sellersListTable where listTitle = :listTitle")
+    fun getAllUsers(listTitle: String): LiveData<Participants>
 }

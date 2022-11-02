@@ -7,9 +7,9 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "sellersListTable")
 data class SellersList(
     @PrimaryKey
-    @ColumnInfo(name = "owner") val owner: String,
-    @ColumnInfo(name = "user") var user: User,
-    @ColumnInfo(name = "carsList") var cars: CarsList = CarsList(arrayListOf())
+    @ColumnInfo(name = "listTitle") val listTitle: String,
+    @ColumnInfo(name = "participants") var participants: Participants = Participants(arrayListOf()),
+    @ColumnInfo(name = "cars") var cars: CarsList = CarsList(arrayListOf())
 ){
-    constructor() : this("", User() )
+    constructor() : this("",)
 }

@@ -16,6 +16,7 @@ class CarsViewModel(val app: Application) : AndroidViewModel(app) {
 
     private val repository = Repository.getInstance(app.applicationContext)
     val sellersListLiveData: MutableLiveData<SellersList> = MutableLiveData()
+    val firebaseManager = FirebaseManager.getInstance(app.applicationContext)
 
     fun getCarsLiveData(sellersList: SellersList): LiveData<CarsList> {
         return repository.getCarsBySellersList(sellersList)
@@ -23,11 +24,12 @@ class CarsViewModel(val app: Application) : AndroidViewModel(app) {
 
     fun addCar(car: Car) {
         viewModelScope.launch(Dispatchers.IO) {
-        repository.addCar(sellersListLiveData.value!!, car) }
+            repository.addCar(sellersListLiveData.value!!, car)
         }
+    }
 
 
-    fun deleteCar(car: Car){
+    fun deleteCar(car: Car) {
         viewModelScope.launch(Dispatchers.IO) {
             sellersListLiveData.value?.let { repository.deleteCar(it, car) }
         }
@@ -37,13 +39,37 @@ class CarsViewModel(val app: Application) : AndroidViewModel(app) {
         sellersListLiveData.value = sellersList
     }
 
-    suspend fun getSellersListByOwner(sellersListOwner: String): SellersList {
+    suspend fun getSellersListByTitle(sellersListTitle: String): SellersList {
         var sellerList: SellersList? = null
         val work = viewModelScope.launch(Dispatchers.IO) {
-            sellerList = repository.getSellersListByOwner(sellersListOwner)
+            sellerList = repository.getSellersListByTitle(sellersListTitle)
         }
         work.join()
         return sellerList!!
+    }
+
+
+    fun getUserLiveData(sellersList: SellersList): LiveData<Participants> {
+        return repository.getUsersBySellerList(sellersList)
+    }
+
+
+    fun addUser(context: Context, email: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            firebaseManager.getUser(email).addOnSuccessListener { document ->
+                if (document.data != null) {
+                    viewModelScope.launch(Dispatchers.IO) {
+                        val user = document.toObject(User::class.java)
+                        repository.addUserToSellerList(sellersListLiveData.value!!, user!!)
+                    }
+                }else
+                    Toast.makeText(context, "Email Not Found", Toast.LENGTH_LONG).show()
+
+            }
+                .addOnFailureListener {
+                    Toast.makeText(context, "Not Found", Toast.LENGTH_LONG).show()
+                }
+        }
     }
 
 }

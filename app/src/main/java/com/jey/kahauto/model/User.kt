@@ -15,6 +15,4 @@ data class User(
     @ColumnInfo(name = "username") var userName: String = "$firstName $lastName"
 
 
-) {
-    constructor() : this("", "","")
-}
+)

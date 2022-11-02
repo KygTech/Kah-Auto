@@ -35,7 +35,6 @@ class SellersActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sellers)
 
-
         sellersListViewModel.getAllSellersListsAsLiveData().observe(this) {
             grid_view.adapter = SellersListAdapter(this, it, onSellersListClick())
         }
@@ -65,9 +64,11 @@ class SellersActivity : AppCompatActivity() {
     private fun checkIfSellerHaveList() {
         sellersListViewModel.getAllSellersListsAsLiveData().observe(this) { sellerList ->
             sellersListViewModel.viewModelScope.launch {
-                sellerList.forEach {
-                    if (it.user.email == myUser.email) {
-                        add_list_button.isVisible = false
+                sellerList.forEach { sellersList ->
+                    sellersList.participants.usersList.forEach { user ->
+                        if (user.email == myUser.email) {
+                            add_list_button.isVisible = false
+                        }
                     }
                 }
             }
@@ -76,26 +77,26 @@ class SellersActivity : AppCompatActivity() {
 
     private fun onSellersListClick(): (sellersList: SellersList) -> Unit = {
         val intent = Intent(this, CarsActivity::class.java)
-        intent.putExtra("owner", it.owner)
+        intent.putExtra("listTitle", it.listTitle)
         startActivity(intent)
     }
 
     fun onAddSellersListClick(view: View) {
-        displayOwnerAlertDialog()
+        createSellerListAlertDialog()
     }
 
-    private fun displayOwnerAlertDialog() {
+    private fun createSellerListAlertDialog() {
         val sellerListEditText = EditText(this)
 
         val alertDialogBuilder = AlertDialog.Builder(this)
         alertDialogBuilder.setTitle("New List")
-        alertDialogBuilder.setMessage("Write your list title")
+        alertDialogBuilder.setMessage("Give your list a title")
         alertDialogBuilder.setView(sellerListEditText)
 
 
         alertDialogBuilder.setPositiveButton("Save") { dialogInterface: DialogInterface, i: Int ->
             val sellerListTitle = sellerListEditText.text.toString()
-            val sellerList = SellersList(sellerListTitle, myUser)
+            val sellerList = SellersList(sellerListTitle, Participants(arrayListOf(myUser)))
             sellersListViewModel.createSellerList(sellerList)
             carsViewModel.setCurrentSellerList(sellerList)
 
@@ -108,7 +109,7 @@ class SellersActivity : AppCompatActivity() {
     }
 
 
-     fun signOutFromApp() {
+    private fun signOutFromApp() {
         GoogleSignIn.getClient(
             this,
             GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).build()

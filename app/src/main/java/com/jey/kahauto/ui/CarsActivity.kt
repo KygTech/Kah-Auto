@@ -1,12 +1,13 @@
 package com.jey.kahauto.ui
 
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuItem
 import android.view.View
+import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -16,11 +17,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
+import androidx.core.view.setPadding
 import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.firebase.auth.FirebaseAuth
 import com.jey.kahauto.*
 import com.jey.kahauto.model.*
 import com.jey.kahauto.viewmodel.CarsViewModel
@@ -35,7 +34,6 @@ import kotlinx.coroutines.launch
 class CarsActivity : AppCompatActivity() {
 
     private val carsViewModel: CarsViewModel by viewModels()
-    private val firebaseAuth = FirebaseAuth.getInstance()
     private val sharedPreferences = SharedPManager.getInstance(this)
 
     private var carFragment = CarFragment()
@@ -58,16 +56,17 @@ class CarsActivity : AppCompatActivity() {
         removeCarDisplayInfo()
         createRecyclerView()
 
-        val sellersListOwner = intent.extras?.get("owner")
-        if (sellersListOwner != null) {
+        val sellerListTitle = intent.extras?.get("listTitle")
+        if (sellerListTitle != null) {
             carsViewModel.viewModelScope.launch {
-                val sellersList = carsViewModel.getSellersListByOwner(sellersListOwner as String)
+                val sellersList = carsViewModel.getSellersListByTitle(sellerListTitle as String)
                 carsViewModel.setCurrentSellerList(sellersList)
-                val userName = sellersList.user.userName
-                val userEmail = sellersList.user.email
 
-                seller_list_title.text = " $sellersListOwner list By ${userName.lowercase()} "
-                onBtnClickAddCar(userEmail)
+                val userName = sellersList.participants.usersList[0].userName
+                val participantsList = sellersList.participants.usersList
+
+                seller_list_title.text = " $sellerListTitle list By ${userName.lowercase()} "
+                onBtnClickAddCar(participantsList)
             }
         }
     }
@@ -116,7 +115,7 @@ class CarsActivity : AppCompatActivity() {
 
     private fun createRecyclerView() {
         val carAdapter = CarAdapter(
-            mutableListOf(),
+            arrayListOf(),
             displayCarInfo(),
             deleteCarItem(),
             onAddImgClick(),
@@ -129,12 +128,33 @@ class CarsActivity : AppCompatActivity() {
             carsViewModel.getCarsLiveData(sellersList).observe(this) {
                 carAdapter.carsListViewUpdate(it.carsList)
             }
+            carsViewModel.getUserLiveData(sellersList).observe(this){
+                users_layout_id.removeAllViews()
+                if(it !=null){
+                    for(user in it.usersList){
+                        val textView = TextView(this)
+                        textView.text= user.firstName.first().toString() + user.lastName.first().toString()
+                        textView.setPadding(20)
+                        users_layout_id.addView(textView)
+                    }
+                }
+            }
         }
     }
 
+    private fun checkParticipants(participantsList: ArrayList<User>) :Boolean {
+        participantsList.forEach {
+            if (it.email == sharedPreferences.getMyUser().email){
+                return true
+            }
+        }
+        return false
+    }
 
-    private fun onBtnClickAddCar(userEmail: String) {
-        btnAddCar.isVisible = userEmail == sharedPreferences.getMyUser().email
+    private fun onBtnClickAddCar(participantsList: ArrayList<User>) {
+        if(checkParticipants(participantsList)){
+            btnAddCar.isVisible=true
+        }
         btnAddCar.setOnClickListener {
             displayAddCarDialog()
         }
@@ -301,5 +321,25 @@ class CarsActivity : AppCompatActivity() {
     }
 
 
+    fun addUserOnClick(view: View) {
+        displayAddUserAlertDialog()
+    }
+
+    private fun displayAddUserAlertDialog() {
+        val sellerListEditText = EditText(this)
+        val alertDialogBuilder = AlertDialog.Builder(this)
+        alertDialogBuilder.setTitle("Add participant")
+        alertDialogBuilder.setMessage("Write here the user's email")
+        alertDialogBuilder.setView(sellerListEditText)
+        alertDialogBuilder.setPositiveButton("Add") { dialogInterface: DialogInterface, i: Int ->
+            val userEmail = sellerListEditText.text.toString()
+            carsViewModel.viewModelScope.launch {
+                carsViewModel.addUser(applicationContext, userEmail)
+            }
+        }
+        alertDialogBuilder.setNegativeButton("Cancel") { dialogInterface: DialogInterface, i: Int ->
+        }
+        alertDialogBuilder.show()
+    }
 }
 

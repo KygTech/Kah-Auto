@@ -24,7 +24,7 @@ class SellersListAdapter (
             }
 
             val sellersList: SellersList? = getItem(position)
-            listItemView!!.tv_card.text = sellersList?.owner
+            listItemView!!.tv_card.text = sellersList?.listTitle
             listItemView.setOnClickListener {
                 onSellerListClick(sellersList!!)
             }

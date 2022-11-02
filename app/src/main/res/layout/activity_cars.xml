@@ -19,6 +19,42 @@
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintTop_toTopOf="parent"/>
 
+
+    <ImageView
+        android:id="@+id/add_user_iv"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        app:srcCompat="@android:drawable/ic_menu_add"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/seller_list_title"
+        android:onClick="addUserOnClick"/>
+
+    <HorizontalScrollView
+        android:id="@+id/scrollPartition"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:scrollbars="none"
+        app:layout_constraintStart_toEndOf="@id/add_user_iv"
+        app:layout_constraintTop_toBottomOf="@id/seller_list_title">
+
+        <LinearLayout
+            android:id="@+id/users_layout_id"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
+            android:scrollbars="none">
+
+        </LinearLayout>
+
+    </HorizontalScrollView>
+
+
+
+
+
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/car_fragment_view"
         android:layout_width="300dp"
@@ -31,27 +67,16 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.086" />
 
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/car_add_fragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="30dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.496"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.086" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/car_rv"
         android:layout_width="340dp"
         android:layout_height="500dp"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="30dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/seller_list_title"
-        android:layout_marginTop="20dp"
-        />
+        app:layout_constraintHorizontal_bias="0.492"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/add_user_iv" />
 
     <Button
         android:id="@+id/btnAddCar"

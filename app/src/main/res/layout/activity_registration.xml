@@ -37,6 +37,7 @@
         android:layout_marginTop="12dp"
         android:drawableLeft="@android:drawable/ic_dialog_email"
         android:text="Sign in"
+        android:backgroundTint="@android:color/holo_blue_dark"
         android:textAllCaps="false"
         android:textColor="@color/white"
         android:onClick="onSignInBtnClick"

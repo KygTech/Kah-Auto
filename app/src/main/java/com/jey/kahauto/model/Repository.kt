@@ -1,7 +1,6 @@
 package com.jey.kahauto.model
 
 import android.content.Context
-import android.net.Uri
 import androidx.lifecycle.LiveData
 import com.jey.kahauto.FirebaseManager
 
@@ -22,20 +21,19 @@ class Repository private constructor(applicationContext: Context) {
     }
 
     fun addCar(sellersList: SellersList, car: Car) {
-
         sellersList.cars.carsList.add(car)
         firebaseManager.updateSellersList(sellersList)
-        sellersListDao.updateCarsList(sellersList.owner, sellersList.cars)
+        sellersListDao.updateCarsList(sellersList.listTitle, sellersList.cars)
     }
 
     fun deleteCar(sellersList: SellersList, car: Car) {
         sellersList.cars.carsList.remove(car)
-        sellersListDao.updateCarsList(sellersList.owner, sellersList.cars)
-
+        sellersListDao.updateCarsList(sellersList.listTitle, sellersList.cars)
+        firebaseManager.updateSellersList(sellersList)
     }
 
     fun updateCarImg(sellersList: SellersList) {
-        sellersListDao.updateCarsList(sellersList.owner, sellersList.cars)
+        sellersListDao.updateCarsList(sellersList.listTitle, sellersList.cars)
         firebaseManager.updateSellersList(sellersList)
 
     }
@@ -50,13 +48,22 @@ class Repository private constructor(applicationContext: Context) {
     }
 
     fun getCarsBySellersList(sellersList: SellersList): LiveData<CarsList> {
-        return sellersListDao.getAllCars(sellersList.owner)
+        return sellersListDao.getAllCars(sellersList.listTitle)
     }
 
-    fun getSellersListByOwner(sellersListOwner: String): SellersList {
-        return sellersListDao.getSellersListByOwner(sellersListOwner)
+    fun getSellersListByTitle(listTitle: String): SellersList {
+        return sellersListDao.getSellersListByTitle(listTitle)
     }
 
+    fun addUserToSellerList(sellersList: SellersList , user: User) {
+        sellersList.participants.usersList.add(user)
+        sellersListDao.updateParticipantsList(sellersList.listTitle, sellersList.participants)
+        firebaseManager.updateSellersList(sellersList)
+    }
+
+    fun getUsersBySellerList(sellersList: SellersList): LiveData<Participants> {
+        return sellersListDao.getAllUsers(sellersList.listTitle)
+    }
 
 
 

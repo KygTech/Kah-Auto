@@ -7,33 +7,47 @@ import com.google.gson.reflect.TypeToken
 class Converters {
 
     @TypeConverter
-    fun toUser(user: String): User {
+    fun toUsersList(participants: String): Participants {
         val gson = Gson()
-        val type = object : TypeToken<User>() {}.type
-        return gson.fromJson(user, type)
+        val type = object : TypeToken<Participants>() {}.type
+        return gson.fromJson(participants, type)
     }
 
     @TypeConverter
-    fun fromUser(user: User): String {
+    fun fromUsersList(participants: Participants): String {
         val gson = Gson()
-        val type = object : TypeToken<User>() {}.type
-        return gson.toJson(user, type)
+        val type = object : TypeToken<Participants>() {}.type
+        return gson.toJson(participants, type)
     }
 
-    @TypeConverter
-    fun toCar(car: String): Car {
-        val gson = Gson()
-        val type = object : TypeToken<Car>() {}.type
-        return gson.fromJson(car, type)
-    }
+//    @TypeConverter
+//    fun toUser(user: String): User {
+//        val gson = Gson()
+//        val type = object : TypeToken<User>() {}.type
+//        return gson.fromJson(user, type)
+//    }
 
-
-    @TypeConverter
-    fun fromCar(car: Car): String {
-        val gson = Gson()
-        val type = object : TypeToken<Car>() {}.type
-        return gson.toJson(car, type)
-    }
+//    @TypeConverter
+//    fun fromUser(user: User): String {
+//        val gson = Gson()
+//        val type = object : TypeToken<User>() {}.type
+//        return gson.toJson(user, type)
+//    }
+//
+//    @TypeConverter
+//    fun toCar(car: String): Car {
+//        val gson = Gson()
+//        val type = object : TypeToken<Car>() {}.type
+//        return gson.fromJson(car, type)
+//    }
+//
+//
+//    @TypeConverter
+//    fun fromCar(car: Car): String {
+//        val gson = Gson()
+//        val type = object : TypeToken<Car>() {}.type
+//        return gson.toJson(car, type)
+//    }
 
 
     @TypeConverter
