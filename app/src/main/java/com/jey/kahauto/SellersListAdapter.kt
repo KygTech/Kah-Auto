@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import com.jey.kahauto.model.SellersList
-import kotlinx.android.synthetic.main.card_item.view.*
+import kotlinx.android.synthetic.main.card_list_item.view.*
 
 class SellersListAdapter (
     context: Context,
@@ -20,7 +20,7 @@ class SellersListAdapter (
             var listItemView = convertView
             if (listItemView == null) {
                 listItemView =
-                    LayoutInflater.from(context).inflate(R.layout.card_item, parent, false)
+                    LayoutInflater.from(context).inflate(R.layout.card_list_item, parent, false)
             }
 
             val sellersList: SellersList? = getItem(position)

@@ -22,7 +22,7 @@ class CarAdapter(
     val onTrashClick: (Car) -> Unit,
     val onAddImgClick: (Car) -> Unit,
     val context: Context,
-    val checkCurrentParticipants: Boolean
+    private val checkCurrentParticipants: Boolean
 ) : RecyclerView.Adapter<CarAdapter.CarsViewHolder>() {
 
     class CarsViewHolder(carView: View) : RecyclerView.ViewHolder(carView) {

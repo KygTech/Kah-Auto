@@ -26,6 +26,12 @@ class Repository private constructor(applicationContext: Context) {
         sellersListDao.updateCarsList(sellersList.listTitle, sellersList.cars)
     }
 
+    fun addUserToSellerList(sellersList: SellersList , user: User) {
+        sellersList.participants.usersList.add(user)
+        sellersListDao.updateParticipantsList(sellersList.listTitle, sellersList.participants)
+        firebaseManager.updateSellersList(sellersList)
+    }
+
     fun deleteCar(sellersList: SellersList, car: Car) {
         sellersList.cars.carsList.remove(car)
         sellersListDao.updateCarsList(sellersList.listTitle, sellersList.cars)
@@ -37,6 +43,7 @@ class Repository private constructor(applicationContext: Context) {
         firebaseManager.updateSellersList(sellersList)
 
     }
+
 
     fun getSellersList(): LiveData<List<SellersList>> {
         return sellersListDao.getAllSellersLists()
@@ -55,14 +62,9 @@ class Repository private constructor(applicationContext: Context) {
         return sellersListDao.getSellersListByTitle(listTitle)
     }
 
-    fun addUserToSellerList(sellersList: SellersList , user: User) {
-        sellersList.participants.usersList.add(user)
-        sellersListDao.updateParticipantsList(sellersList.listTitle, sellersList.participants)
-        firebaseManager.updateSellersList(sellersList)
-    }
 
-    fun getUsersBySellerList(sellersList: SellersList): LiveData<Participants> {
-        return sellersListDao.getAllUsers(sellersList.listTitle)
+    fun getParticipantsBySellerList(sellersList: SellersList): LiveData<Participants> {
+        return sellersListDao.getAllParticipants(sellersList.listTitle)
     }
 
 

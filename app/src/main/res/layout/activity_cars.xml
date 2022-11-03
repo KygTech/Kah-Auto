@@ -46,30 +46,16 @@
         android:onClick="addUserOnClick"
      />
 
-    <HorizontalScrollView
-        android:id="@+id/scrollPartition"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:scrollbars="none"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/participants_rv"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:layout_marginTop="15dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/list_owners"
-        android:layout_marginStart="7dp"
-        >
-
-        <LinearLayout
-            android:id="@+id/users_layout_id"
-            android:layout_width="wrap_content"
-            android:layout_height="48dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingLeft="4dp"
-            android:paddingRight="4dp"
-            android:scrollbars="none"
-         >
-
-        </LinearLayout>
-
-    </HorizontalScrollView>
+        android:orientation="horizontal"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        />
 
 
     <androidx.fragment.app.FragmentContainerView
@@ -84,6 +70,17 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.086" />
 
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/participant_fragment_view"
+        android:layout_width="300dp"
+        android:layout_height="400dp"
+        android:layout_margin="30dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.404" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/car_rv"
@@ -93,7 +90,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.492"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/scrollPartition"
+        app:layout_constraintTop_toBottomOf="@id/participants_rv"
         />
 
     <Button

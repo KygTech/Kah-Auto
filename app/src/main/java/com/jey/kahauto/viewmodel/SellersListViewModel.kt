@@ -3,7 +3,6 @@ package com.jey.kahauto.viewmodel
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.jey.kahauto.model.Repository
 import com.jey.kahauto.model.SellersList

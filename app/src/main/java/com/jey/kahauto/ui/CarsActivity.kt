@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.EditText
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -17,7 +16,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
-import androidx.core.view.setPadding
 import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.jey.kahauto.*
@@ -37,6 +35,7 @@ class CarsActivity : AppCompatActivity() {
     private val sharedPreferences = SharedPManager.getInstance(this)
 
     private var carFragment = CarFragment()
+    private var participantFragment = ParticipantFragment()
     private var chosenCar: Car? = null
 
 
@@ -54,7 +53,8 @@ class CarsActivity : AppCompatActivity() {
         super.onStart()
 
         removeCarDisplayInfo()
-
+        removeParticipantDisplayInfo()
+        createParticipantsRecyclerView()
 
         val sellerListTitle = intent.extras?.get("listTitle")
         if (sellerListTitle != null) {
@@ -63,16 +63,16 @@ class CarsActivity : AppCompatActivity() {
                 carsViewModel.setCurrentSellerList(sellersList)
 
                 val participantsList = sellersList.participants.usersList
-                createRecyclerView(participantsList)
+                createCarsListRecyclerView(participantsList)
                 seller_list_title.text = " ${sellerListTitle.uppercase()}  "
                 onBtnClickAddCar()
-             if(!checkCurrentParticipants(participantsList))
-                 closeButtonsVisible()
+                if (!checkCurrentParticipants(participantsList))
+                    closeButtonsVisible()
             }
         }
     }
 
-    private fun closeButtonsVisible(){
+    private fun closeButtonsVisible() {
         add_user_iv.isVisible = false
         btnAddCar.isVisible = false
     }
@@ -116,7 +116,39 @@ class CarsActivity : AppCompatActivity() {
         )
     }
 
-    private fun createRecyclerView(participantsList: ArrayList<User>) {
+    private fun createParticipantsRecyclerView() {
+        val participantsAdapter = ParticipantsAdapter(this, arrayListOf(), displayParticipantInfo())
+
+        participants_rv.adapter = participantsAdapter
+        participants_rv.layoutManager =
+            LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+
+        carsViewModel.sellersListLiveData.observe(this) { sellerList ->
+            carsViewModel.getParticipantLiveData(sellerList).observe(this) { participant ->
+                participantsAdapter.participantsListViewUpdate(participant.usersList)
+            }
+        }
+    }
+
+    private fun displayParticipantInfo(): (user: User) -> Unit = {
+        val bundle = bundleOf(
+            "participant_first_name" to it.firstName,
+            "participant_last_name" to it.lastName,
+            "participant_email" to it.email,
+            "participant_phone_number" to it.phoneNumber,
+            "participant_img_path" to it.imagePath,
+            "participant_img_type" to it.imageType
+        )
+
+        participantFragment.arguments = bundle
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.participant_fragment_view, participantFragment)
+            .commit()
+        car_rv.isVisible = false
+    }
+
+
+    private fun createCarsListRecyclerView(participantsList: ArrayList<User>) {
         val carAdapter = CarAdapter(
             arrayListOf(),
             displayCarInfo(),
@@ -131,18 +163,6 @@ class CarsActivity : AppCompatActivity() {
         carsViewModel.sellersListLiveData.observe(this) { sellersList ->
             carsViewModel.getCarsLiveData(sellersList).observe(this) {
                 carAdapter.carsListViewUpdate(it.carsList)
-            }
-            carsViewModel.getUserLiveData(sellersList).observe(this) {
-                users_layout_id.removeAllViews()
-                if (it != null) {
-                    for (user in it.usersList) {
-                        val textView = TextView(this)
-                        textView.text =
-                            user.firstName.first().toString() + user.lastName.first().toString()
-                        textView.setPadding(10)
-                        users_layout_id.addView(textView)
-                    }
-                }
             }
         }
     }
@@ -243,9 +263,17 @@ class CarsActivity : AppCompatActivity() {
         car_rv.isVisible = false
     }
 
+
     private fun removeCarDisplayInfo() {
         car_fragment_view.setOnClickListener {
             supportFragmentManager.beginTransaction().remove(carFragment).commit()
+            car_rv.isVisible = true
+        }
+    }
+
+    private fun removeParticipantDisplayInfo() {
+        participant_fragment_view.setOnClickListener {
+            supportFragmentManager.beginTransaction().remove(participantFragment).commit()
             car_rv.isVisible = true
         }
     }
@@ -327,9 +355,12 @@ class CarsActivity : AppCompatActivity() {
         displayAddUserAlertDialog()
     }
 
-    fun checkParticipantsInSellsList(participants: Participants, userEmail:String): Boolean {
+    private fun checkParticipantsInSellsList(
+        participants: Participants,
+        userEmail: String
+    ): Boolean {
         for (user in participants.usersList) {
-            if(user.email == userEmail){
+            if (user.email == userEmail) {
                 return true
             }
         }
@@ -348,17 +379,18 @@ class CarsActivity : AppCompatActivity() {
                 val participantsList =
                     carsViewModel.sellersListLiveData.value!!.participants
 
-               if(checkParticipantsInSellsList(participantsList, userEmail)){
-                        Toast.makeText(
-                            this,
-                            "User is already participant in the list",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }else {
-                   carsViewModel.viewModelScope.launch {
-                       carsViewModel.addUser(applicationContext, userEmail)
-                   }
-               }
+                if (checkParticipantsInSellsList(participantsList, userEmail)) {
+                    Toast.makeText(
+                        this,
+                        "User is already participant in the list",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } else {
+                    carsViewModel.viewModelScope.launch {
+                        carsViewModel.addUser(applicationContext, userEmail)
+
+                    }
+                }
             } else {
                 Toast.makeText(applicationContext, "Email field if empty", Toast.LENGTH_SHORT)
                     .show()

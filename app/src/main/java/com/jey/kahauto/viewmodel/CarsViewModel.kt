@@ -16,7 +16,7 @@ class CarsViewModel(val app: Application) : AndroidViewModel(app) {
 
     private val repository = Repository.getInstance(app.applicationContext)
     val sellersListLiveData: MutableLiveData<SellersList> = MutableLiveData()
-    val firebaseManager = FirebaseManager.getInstance(app.applicationContext)
+    private val firebaseManager = FirebaseManager.getInstance(app.applicationContext)
 
     fun getCarsLiveData(sellersList: SellersList): LiveData<CarsList> {
         return repository.getCarsBySellersList(sellersList)
@@ -27,7 +27,6 @@ class CarsViewModel(val app: Application) : AndroidViewModel(app) {
             repository.addCar(sellersListLiveData.value!!, car)
         }
     }
-
 
     fun deleteCar(car: Car) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -49,8 +48,8 @@ class CarsViewModel(val app: Application) : AndroidViewModel(app) {
     }
 
 
-    fun getUserLiveData(sellersList: SellersList): LiveData<Participants> {
-        return repository.getUsersBySellerList(sellersList)
+    fun getParticipantLiveData(sellersList: SellersList): LiveData<Participants> {
+        return repository.getParticipantsBySellerList(sellersList)
     }
 
 
@@ -62,7 +61,7 @@ class CarsViewModel(val app: Application) : AndroidViewModel(app) {
                         val user = document.toObject(User::class.java)
                         repository.addUserToSellerList(sellersListLiveData.value!!, user!!)
                     }
-                }else
+                } else
                     Toast.makeText(context, "Email Not Found", Toast.LENGTH_LONG).show()
 
             }

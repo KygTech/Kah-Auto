@@ -32,5 +32,5 @@ interface SellersListDao {
     fun updateParticipantsList(listTitle: String, participants: Participants)
 
     @Query("Select participants from sellersListTable where listTitle = :listTitle")
-    fun getAllUsers(listTitle: String): LiveData<Participants>
+    fun getAllParticipants(listTitle: String): LiveData<Participants>
 }
