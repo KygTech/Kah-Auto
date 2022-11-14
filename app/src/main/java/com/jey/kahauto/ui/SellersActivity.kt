@@ -23,11 +23,44 @@ import com.jey.kahauto.viewmodel.SellersListViewModel
 import kotlinx.android.synthetic.main.activity_sellers.*
 import kotlinx.coroutines.launch
 
-class SellersActivity : AppCompatActivity() {
+
+open class BaseActivity : AppCompatActivity() {
+
+    private val firebaseAuth = FirebaseAuth.getInstance()
+
+    private fun signOutFromApp() {
+        GoogleSignIn.getClient(
+            this,
+            GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).build()
+        ).signOut()
+        SharedPManager.getInstance(this).sharedPrefs.edit().remove("LAST_LOGIN").apply()
+        firebaseAuth.signOut()
+        val intent = Intent(this, RegistrationActivity::class.java)
+        startActivity(intent)
+        finish()
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.menu_logout -> {
+                signOutFromApp()
+            }
+            R.id.menu_about -> {}
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+}
+
+class SellersActivity : BaseActivity() {
+
 
     private val sellersListViewModel: SellersListViewModel by viewModels()
     private val carsViewModel: CarsViewModel by viewModels()
-    private val firebaseAuth = FirebaseAuth.getInstance()
     private lateinit var repository: Repository
     private val myUser = SharedPManager.getInstance(this).getMyUser()
 
@@ -45,21 +78,6 @@ class SellersActivity : AppCompatActivity() {
         checkIfSellerHaveList()
     }
 
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.menu_logout -> {
-                signOutFromApp()
-            }
-            R.id.menu_about -> {}
-        }
-        return super.onOptionsItemSelected(item)
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu, menu)
-        return super.onCreateOptionsMenu(menu)
-    }
 
     private fun checkIfSellerHaveList() {
         sellersListViewModel.getAllSellersListsAsLiveData().observe(this) { sellerList ->
@@ -109,15 +127,4 @@ class SellersActivity : AppCompatActivity() {
     }
 
 
-    private fun signOutFromApp() {
-        GoogleSignIn.getClient(
-            this,
-            GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).build()
-        ).signOut()
-        SharedPManager.getInstance(this).sharedPrefs.edit().remove("LAST_LOGIN").apply()
-        firebaseAuth.signOut()
-        val intent = Intent(this, RegistrationActivity::class.java)
-        startActivity(intent)
-        finish()
-    }
 }

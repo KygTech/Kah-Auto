@@ -18,19 +18,24 @@
         <entry key="..\:/Users/KYGTe/OneDrive/Desktop/HackCampus/Android/Kah-Auto/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.1" />
         <entry key="..\:/Users/KYGTe/OneDrive/Desktop/HackCampus/Android/Kah-Auto/app/src/main/res/drawable/button_login.xml" value="0.1065" />
         <entry key="..\:/Users/KYGTe/OneDrive/Desktop/HackCampus/Android/Kah-Auto/app/src/main/res/drawable/login_button.xml" value="0.1375" />
+        <entry key="..\:/Users/KYGTe/OneDrive/Desktop/HackCampus/Android/Kah-Auto/app/src/main/res/drawable/search_view_bg.xml" value="0.1735" />
         <entry key="..\:/Users/KYGTe/OneDrive/Desktop/HackCampus/Android/Kah-Auto/app/src/main/res/drawable/sign_in_button.xml" value="0.1375" />
         <entry key="..\:/Users/KYGTe/OneDrive/Desktop/HackCampus/Android/Kah-Auto/app/src/main/res/layout/activity_car_add.xml" value="0.3111413043478261" />
-        <entry key="..\:/Users/KYGTe/OneDrive/Desktop/HackCampus/Android/Kah-Auto/app/src/main/res/layout/activity_cars.xml" value="0.33177083333333335" />
+        <entry key="..\:/Users/KYGTe/OneDrive/Desktop/HackCampus/Android/Kah-Auto/app/src/main/res/layout/activity_cars.xml" value="0.22" />
+        <entry key="..\:/Users/KYGTe/OneDrive/Desktop/HackCampus/Android/Kah-Auto/app/src/main/res/layout/activity_cars_fragment.xml" value="0.15364583333333334" />
         <entry key="..\:/Users/KYGTe/OneDrive/Desktop/HackCampus/Android/Kah-Auto/app/src/main/res/layout/activity_main.xml" value="0.33" />
         <entry key="..\:/Users/KYGTe/OneDrive/Desktop/HackCampus/Android/Kah-Auto/app/src/main/res/layout/activity_registration.xml" value="0.33" />
         <entry key="..\:/Users/KYGTe/OneDrive/Desktop/HackCampus/Android/Kah-Auto/app/src/main/res/layout/activity_sellers.xml" value="0.3134057971014493" />
         <entry key="..\:/Users/KYGTe/OneDrive/Desktop/HackCampus/Android/Kah-Auto/app/src/main/res/layout/activity_sign_in.xml" value="0.25" />
-        <entry key="..\:/Users/KYGTe/OneDrive/Desktop/HackCampus/Android/Kah-Auto/app/src/main/res/layout/car_fragment.xml" value="0.1" />
+        <entry key="..\:/Users/KYGTe/OneDrive/Desktop/HackCampus/Android/Kah-Auto/app/src/main/res/layout/car_fragment.xml" value="0.22" />
         <entry key="..\:/Users/KYGTe/OneDrive/Desktop/HackCampus/Android/Kah-Auto/app/src/main/res/layout/car_item.xml" value="0.33" />
         <entry key="..\:/Users/KYGTe/OneDrive/Desktop/HackCampus/Android/Kah-Auto/app/src/main/res/layout/car_item_row.xml" value="0.33177083333333335" />
         <entry key="..\:/Users/KYGTe/OneDrive/Desktop/HackCampus/Android/Kah-Auto/app/src/main/res/layout/card_item.xml" value="0.33" />
         <entry key="..\:/Users/KYGTe/OneDrive/Desktop/HackCampus/Android/Kah-Auto/app/src/main/res/layout/card_list_item.xml" value="0.33177083333333335" />
+        <entry key="..\:/Users/KYGTe/OneDrive/Desktop/HackCampus/Android/Kah-Auto/app/src/main/res/layout/cars_list_fragment.xml" value="0.18" />
+        <entry key="..\:/Users/KYGTe/OneDrive/Desktop/HackCampus/Android/Kah-Auto/app/src/main/res/layout/contact_row.xml" value="0.13541666666666666" />
         <entry key="..\:/Users/KYGTe/OneDrive/Desktop/HackCampus/Android/Kah-Auto/app/src/main/res/layout/dialog_add_car.xml" value="0.33177083333333335" />
+        <entry key="..\:/Users/KYGTe/OneDrive/Desktop/HackCampus/Android/Kah-Auto/app/src/main/res/layout/dialog_add_user.xml" value="0.33177083333333335" />
         <entry key="..\:/Users/KYGTe/OneDrive/Desktop/HackCampus/Android/Kah-Auto/app/src/main/res/layout/dialog_choose_img.xml" value="0.33" />
         <entry key="..\:/Users/KYGTe/OneDrive/Desktop/HackCampus/Android/Kah-Auto/app/src/main/res/layout/dialog_sign_in.xml" value="0.3307291666666667" />
         <entry key="..\:/Users/KYGTe/OneDrive/Desktop/HackCampus/Android/Kah-Auto/app/src/main/res/layout/dialog_sign_up.xml" value="0.33177083333333335" />
@@ -45,6 +50,7 @@
         <entry key="..\:/Users/KYGTe/OneDrive/Desktop/HackCampus/Android/Kah-Auto/app/src/main/res/layout/fragment_sing_up.xml" value="0.21927083333333333" />
         <entry key="..\:/Users/KYGTe/OneDrive/Desktop/HackCampus/Android/Kah-Auto/app/src/main/res/layout/participant_card.xml" value="0.67" />
         <entry key="..\:/Users/KYGTe/OneDrive/Desktop/HackCampus/Android/Kah-Auto/app/src/main/res/layout/participant_fragment.xml" value="0.35572916666666665" />
+        <entry key="..\:/Users/KYGTe/OneDrive/Desktop/HackCampus/Android/Kah-Auto/app/src/main/res/menu/menu.xml" value="0.33177083333333335" />
       </map>
     </option>
   </component>

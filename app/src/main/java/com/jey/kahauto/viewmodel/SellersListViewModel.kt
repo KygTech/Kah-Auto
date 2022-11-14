@@ -17,7 +17,6 @@ class SellersListViewModel (val app: Application) : AndroidViewModel(app) {
         return repository.getSellersList()
     }
 
-
     fun createSellerList(sellersList: SellersList) {
         viewModelScope.launch(Dispatchers.IO) {
             repository.addSellersList(sellersList)

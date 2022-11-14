@@ -7,6 +7,8 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.google.android.gms.tasks.Task
+import com.google.firebase.firestore.QuerySnapshot
 import com.jey.kahauto.FirebaseManager
 import com.jey.kahauto.model.*
 import kotlinx.coroutines.Dispatchers
@@ -16,11 +18,14 @@ class CarsViewModel(val app: Application) : AndroidViewModel(app) {
 
     private val repository = Repository.getInstance(app.applicationContext)
     val sellersListLiveData: MutableLiveData<SellersList> = MutableLiveData()
+    val contactListLiveData: MutableLiveData<User> = MutableLiveData()
     private val firebaseManager = FirebaseManager.getInstance(app.applicationContext)
 
     fun getCarsLiveData(sellersList: SellersList): LiveData<CarsList> {
         return repository.getCarsBySellersList(sellersList)
     }
+
+
 
     fun addCar(car: Car) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -69,6 +74,10 @@ class CarsViewModel(val app: Application) : AndroidViewModel(app) {
                     Toast.makeText(context, "Not Found", Toast.LENGTH_LONG).show()
                 }
         }
+    }
+
+    fun getAllUsers(): List<User> {
+        return repository.getAllUsers()
     }
 
 }

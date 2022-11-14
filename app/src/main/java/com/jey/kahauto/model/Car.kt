@@ -22,5 +22,5 @@ data class Car(
 {
     @PrimaryKey(autoGenerate = true)
     var id = 0
-
+    constructor() : this("" ,"","","","")
 }

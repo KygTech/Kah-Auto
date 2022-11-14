@@ -33,5 +33,6 @@ class CarFragment : Fragment(R.layout.fragment_car_item_display) {
         context?.let { Glide.with(it).load(carImgPath).into(carFragmentImg) }
     }
 
+
 }
 

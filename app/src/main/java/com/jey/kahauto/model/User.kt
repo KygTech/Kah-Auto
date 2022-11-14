@@ -10,7 +10,7 @@ data class User(
     @ColumnInfo(name = "email") val email: String,
     @ColumnInfo(name = "firstname") val firstName: String,
     @ColumnInfo(name = "lastname") val lastName: String,
-    @ColumnInfo(name = "phoneNumber") val phoneNumber: String = "0000",
+    @ColumnInfo(name = "phoneNumber") val phoneNumber: String = "0505556666",
     @ColumnInfo(name = "image_path") var imagePath : String? = null,
     @ColumnInfo(name = "image_type") var imageType: IMAGE_TYPE?= null,
     @ColumnInfo(name = "createdAt") var createdAt: Long = System.currentTimeMillis(),

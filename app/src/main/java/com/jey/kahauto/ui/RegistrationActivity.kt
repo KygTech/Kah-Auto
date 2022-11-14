@@ -189,7 +189,7 @@ class RegistrationActivity : AppCompatActivity() {
                                 val myUser = User(
                                     email,
                                     it.get("firstname").toString(),
-                                    it.get("lastname").toString()
+                                    it.get("lastname").toString(),
                                 )
                                 goInApp(myUser)
                             }

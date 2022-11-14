@@ -1,38 +1,51 @@
 package com.jey.kahauto.ui
 
+import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
+import android.provider.ContactsContract
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.EditText
+import android.widget.SearchView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.jey.kahauto.*
 import com.jey.kahauto.model.*
 import com.jey.kahauto.viewmodel.CarsViewModel
 import kotlinx.android.synthetic.main.activity_cars.*
+import kotlinx.android.synthetic.main.activity_sellers.*
+import kotlinx.android.synthetic.main.contact_row.view.*
 import kotlinx.android.synthetic.main.dialog_add_car.view.*
+import kotlinx.android.synthetic.main.dialog_add_user.*
+import kotlinx.android.synthetic.main.dialog_add_user.view.*
 import kotlinx.android.synthetic.main.dialog_choose_img.view.*
 
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 
 
-class CarsActivity : AppCompatActivity() {
+class CarsActivity : BaseActivity() {
 
     private val carsViewModel: CarsViewModel by viewModels()
     private val sharedPreferences = SharedPManager.getInstance(this)
+    private val contactsList = ArrayList<Contact>()
+    private lateinit var contactAdapter: ContactAdapter
 
     private var carFragment = CarFragment()
     private var participantFragment = ParticipantFragment()
@@ -142,7 +155,7 @@ class CarsActivity : AppCompatActivity() {
 
         participantFragment.arguments = bundle
         supportFragmentManager.beginTransaction()
-            .replace(R.id.participant_fragment_view, participantFragment)
+            .replace(R.id.container_fragment_view, participantFragment)
             .commit()
         car_rv.isVisible = false
     }
@@ -258,21 +271,20 @@ class CarsActivity : AppCompatActivity() {
 
         carFragment.arguments = bundle
         supportFragmentManager.beginTransaction()
-            .replace(R.id.car_fragment_view, carFragment)
+            .replace(R.id.container_fragment_view, carFragment)
             .commit()
         car_rv.isVisible = false
     }
 
-
     private fun removeCarDisplayInfo() {
-        car_fragment_view.setOnClickListener {
+        container_fragment_view.setOnClickListener {
             supportFragmentManager.beginTransaction().remove(carFragment).commit()
             car_rv.isVisible = true
         }
     }
 
     private fun removeParticipantDisplayInfo() {
-        participant_fragment_view.setOnClickListener {
+        container_fragment_view.setOnClickListener {
             supportFragmentManager.beginTransaction().remove(participantFragment).commit()
             car_rv.isVisible = true
         }
@@ -351,10 +363,6 @@ class CarsActivity : AppCompatActivity() {
     }
 
 
-    fun addUserOnClick(view: View) {
-        displayAddUserAlertDialog()
-    }
-
     private fun checkParticipantsInSellsList(
         participants: Participants,
         userEmail: String
@@ -367,15 +375,29 @@ class CarsActivity : AppCompatActivity() {
         return false
     }
 
+
+    fun addUserOnClick(view: View) {
+        displayAddUserAlertDialog()
+    }
+
+
     private fun displayAddUserAlertDialog() {
-        val sellerListEditText = EditText(this)
-        val alertDialogBuilder = AlertDialog.Builder(this)
-        alertDialogBuilder.setTitle("Add participant")
-        alertDialogBuilder.setMessage("Write the user's email")
-        alertDialogBuilder.setView(sellerListEditText)
-        alertDialogBuilder.setPositiveButton("Add") { dialogInterface: DialogInterface, i: Int ->
-            val userEmail = sellerListEditText.text.toString()
+
+        val mDialogView = layoutInflater
+            .inflate(R.layout.dialog_add_user, null, false)
+
+
+        val dialog = AlertDialog.Builder(this)
+            .setView(mDialogView)
+            .create()
+
+        checkPermission()
+
+        val btnSearchByEmail = mDialogView.search_user_btn
+        btnSearchByEmail.setOnClickListener {
+            val userEmail = mDialogView.search_by_email_ed.text.toString()
             if (userEmail.isNotEmpty()) {
+                dialog.cancel()
                 val participantsList =
                     carsViewModel.sellersListLiveData.value!!.participants
 
@@ -392,15 +414,169 @@ class CarsActivity : AppCompatActivity() {
                     }
                 }
             } else {
-                Toast.makeText(applicationContext, "Email field if empty", Toast.LENGTH_SHORT)
+                Toast.makeText(applicationContext, "Email field is empty", Toast.LENGTH_SHORT)
                     .show()
             }
         }
-        alertDialogBuilder.setNegativeButton("Cancel") { dialogInterface: DialogInterface, i: Int ->
-            dialogInterface.cancel()
+
+        val closeAddUser = mDialogView.close_add_user
+        closeAddUser.setOnClickListener {
+            dialog.cancel()
         }
-        alertDialogBuilder.show()
+
+
+        mDialogView.contact_sv.clearFocus()
+        mDialogView.contact_sv.setOnQueryTextListener(object : SearchView.OnQueryTextListener,
+            androidx.appcompat.widget.SearchView.OnQueryTextListener {
+
+            override fun onQueryTextSubmit(p0: String?): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String): Boolean {
+                fillerList(newText)
+                return true
+            }
+        })
+
+
+
+
+        mDialogView.contact_rv.layoutManager = LinearLayoutManager(this)
+        contactAdapter = ContactAdapter(contactsList, onContactClick(), this)
+        mDialogView.contact_rv.adapter = contactAdapter
+
+
+
+
+        dialog.show()
+
+
+    }
+
+    private val requestPermission =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+            if (isGranted) {
+                getAllPhoneContacts()
+            }
+        }
+
+    private fun checkPermission() {
+        val isPermissionAlreadyGranted = ContextCompat.checkSelfPermission(
+            this,
+            Manifest.permission.READ_CONTACTS
+        )
+        if (isPermissionAlreadyGranted == PackageManager.PERMISSION_GRANTED) {
+            getAllPhoneContacts()
+        } else {
+            val needToExplainThePermission =
+                ActivityCompat.shouldShowRequestPermissionRationale(
+                    this,
+                    Manifest.permission.READ_CONTACTS
+                )
+            if (needToExplainThePermission) {
+                Toast.makeText(
+                    this,
+                    "We need your permission to find contact for you",
+                    Toast.LENGTH_SHORT
+                ).show()
+                requestPermission.launch(Manifest.permission.READ_CONTACTS)
+            } else {
+                requestPermission.launch(Manifest.permission.READ_CONTACTS)
+            }
+        }
+
+    }
+
+
+    @SuppressLint("Range")
+    fun getAllPhoneContacts() {
+
+        var cols = listOf(
+            ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
+            ContactsContract.CommonDataKinds.Phone.NUMBER,
+        ).toTypedArray()
+
+        val rs = contentResolver.query(
+            ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+            cols,
+            null,
+            null,
+            ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME
+        )
+
+        while (rs!!.moveToNext()) {
+            val name =
+                rs.getString(rs.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME))
+            val phone =
+                rs.getString(rs.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER))
+            val newContact = Contact(name, phone)
+            contactsList.add(newContact)
+        }
+
+    }
+
+    private fun fillerList(text: String) {
+        val filteredList = ArrayList<Contact>()
+        for (contact in contactsList) {
+            if (contact.displayName.lowercase().contains(text.lowercase())) {
+                filteredList.add(contact)
+            }
+        }
+        if (filteredList.isEmpty()) {
+            Toast.makeText(this, "No contact found", Toast.LENGTH_SHORT).show()
+            filteredList.removeAll(filteredList.toSet())
+            contactAdapter.setFilteredList(filteredList)
+        } else {
+            contactAdapter.setFilteredList(filteredList)
+        }
+    }
+
+
+    private fun onContactClick(): (Contact) -> Unit = {
+
+        sendInviteByWhatsApp(it.phoneNumber)
+
+
+//        val phone = it.phoneNumber
+//        val display = it.displayName
+//        Toast.makeText(this, "$display -  $phone", Toast.LENGTH_SHORT).show()
+//        carsViewModel.viewModelScope.launch {
+//            carsViewModel.getAllUsers().forEach {
+//               Log.d ("Test" ,"$it.email")
+//            }
+//            }
+    }
+
+
+    private fun appInstalledOrNot(url: String): Boolean {
+        val appInstalled: Boolean = try {
+            packageManager.getPackageInfo(url, PackageManager.GET_ACTIVITIES)
+            true
+        } catch (e: PackageManager.NameNotFoundException) {
+            false
+        }
+        return appInstalled
+    }
+
+    private fun sendInviteByWhatsApp(phoneNumber: String) {
+        val url = "https://api.whatsapp.com/send?phone="
+        val message =
+            "Hey, i wanna invite you to join the best car selling app ! download from PlayStore - LINK"
+
+        if (appInstalledOrNot("com.whatsapp")) {
+            val intent = Intent(Intent.ACTION_VIEW)
+            intent.data = Uri.parse("$url${phoneNumber}&text=$message")
+            startActivity(intent)
+        } else {
+            Toast.makeText(this, "Whats app not installed on your device", Toast.LENGTH_SHORT)
+                .show();
+        }
     }
 
 }
+
+
+
+
 

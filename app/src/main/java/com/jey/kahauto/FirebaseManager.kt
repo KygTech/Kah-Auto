@@ -32,8 +32,8 @@ class FirebaseManager private constructor(context: Context) {
 
     fun getUser(userEmail: String): Task<DocumentSnapshot> {
         return db.collection("users").document(userEmail).get()
-
     }
+
 
     fun addUser(newUser: User): Task<Void> {
         return db.collection("users").document(newUser.email).set(newUser)
@@ -43,10 +43,6 @@ class FirebaseManager private constructor(context: Context) {
 
     fun updateSellersList(sellersList: SellersList) {
         db.collection("sellersList").document(sellersList.listTitle).set(sellersList)
-    }
-
-    fun getAllSellersLists(): Task<QuerySnapshot> {
-        return db.collection("sellersList").get()
     }
 
 

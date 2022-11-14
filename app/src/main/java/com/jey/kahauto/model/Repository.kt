@@ -1,6 +1,8 @@
 package com.jey.kahauto.model
 
 import android.content.Context
+import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.LiveData
 import com.jey.kahauto.FirebaseManager
 
@@ -19,6 +21,8 @@ class Repository private constructor(applicationContext: Context) {
             return instance
         }
     }
+
+
 
     fun addCar(sellersList: SellersList, car: Car) {
         sellersList.cars.carsList.add(car)
@@ -62,11 +66,14 @@ class Repository private constructor(applicationContext: Context) {
         return sellersListDao.getSellersListByTitle(listTitle)
     }
 
+    fun getAllUsers():  List<User>{
+        return sellersListDao.getAllUsers()
+    }
+
 
     fun getParticipantsBySellerList(sellersList: SellersList): LiveData<Participants> {
         return sellersListDao.getAllParticipants(sellersList.listTitle)
     }
-
 
 
 }
